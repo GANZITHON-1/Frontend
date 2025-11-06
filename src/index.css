@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gothic+A1&family=Noto+Sans+KR:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+:root {
+  font-family: "Pretendard", "Inter", "Noto Sans KR", "Gothic A1", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* css초기화 */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  vertical-align: baseline;
+  color: #202123;
+}
+header {
+  z-index: 9999;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+  color: var(--text-color);
+  font-family: "Inter", "Noto Sans KR", "Gothic A1", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: #202123;
+  text-decoration: none;
+}
+
+.flexWidthCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.flexHeightCenter {
+  display: flex;
+  align-items: center;
+}
+
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flexBetweenCol {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}

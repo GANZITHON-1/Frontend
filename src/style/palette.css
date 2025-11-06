@@ -1,0 +1,35 @@
+:root {
+  /* 기본 font컬러 #202123 */
+
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #3b82f6;
+  --primary-400: #2563eb;
+
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #9ca3af;
+  --gray-400: #6b7280;
+  --gray-500: #4b5563;
+  --gray-600: #1f2937;
+
+  --black: #000;
+  --white: #fff;
+
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #f87171;
+  --red-300: #ef4444;
+
+  --green-50: #dcfce7;
+  --green-100: #bbf7d0;
+  --green-200: #22c55e;
+  --green-300: #16a34a;
+
+  --cyan: #06b6d4;
+  --indigo: #6366f1;
+  --yellow: #eab308;
+  --orange: #f97316;
+}
