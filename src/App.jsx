@@ -5,15 +5,17 @@ import ScrollToTop from "./hook/useScrollTop";
 
 function App() {
   return (
-    <>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<SplashPage />} />
+    <div className="app-container">
+      <div className="scroll-area">
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<SplashPage />} />
 
-        {/* #1 지도 페이지 (이영규) */}
-        <Route path="/map" element={<MapPage />} />
-      </Routes>
-    </>
+          {/* #1 지도 페이지 (이영규) */}
+          <Route path="/map" element={<MapPage />} />
+        </Routes>
+      </div>
+    </div>
   );
 }
 
