@@ -4,7 +4,7 @@ import "./_index.css";
 const DetalIcon = () => {
   return (
     <div
-      className="iconsStyleClass flexCenter"
+      className="iconsStyleClass"
       style={{
         backgroundColor: "var(--red-200)",
       }}>
