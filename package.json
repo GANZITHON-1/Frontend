@@ -24,6 +24,7 @@
     "aos": "^2.3.4",
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
+    "re-resizable": "^6.11.2",
     "react": "^19.1.1",
     "react-dom": "^19.2.0",
     "react-responsive": "^10.0.1",
