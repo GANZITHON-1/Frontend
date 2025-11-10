@@ -7,6 +7,7 @@ import SignupPage from "./pages/signup/entry/SignupPage";
 import SignupPage1 from "./pages/signup/entry/SignupPage1";
 import SignupPage2 from "./pages/signup/entry/SignupPage2";
 import SignupPage3 from "./pages/signup/entry/SignupPage3";
+import LoginPage from "./pages/signup/entry/LoginPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/signup1" element={<SignupPage1 />} />
           <Route path="/signup2" element={<SignupPage2 />} />
           <Route path="/signup3" element={<SignupPage3 />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </div>
     </div>
