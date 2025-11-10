@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./NavigationBar.css";
 import backIcon from "../../assets/icons/back.svg";
 
-export default function NavigationBar({ title = "제목", onBack }) {
+export default function NavigationBar({ title = null, onBack }) {
   const navigate = useNavigate();
   const handleBack = () => {
     if (typeof onBack === "function") onBack();

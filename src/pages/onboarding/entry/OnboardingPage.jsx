@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-
 import "../ui/OnboardingPage.css";
 import background1 from "../../../assets/images/onboard2.png";
 import iconsImage from "../../../assets/images/onboard1.svg";
@@ -116,7 +115,9 @@ export function OnboardingPage() {
         ))}
       </Swiper>
       <div className="buttonBox">
-        <button className="signupBtn">회원가입</button>
+        <button className="signupBtn" onClick={() => navigate("/signup")}>
+          회원가입
+        </button>
         <button className="loginBtn">로그인</button>
       </div>
     </div>

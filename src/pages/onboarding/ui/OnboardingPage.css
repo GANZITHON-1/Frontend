@@ -163,6 +163,16 @@
   width: 100%;
 }
 
+.signupBtn:hover,
+.signupBtn:active {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    ),
+    #2563eb;
+}
+
 .loginBtn {
   display: flex;
   height: 50px;
@@ -176,4 +186,10 @@
   background: var(--White, #fff);
   color: var(--Gray-300, #9ca3af);
   width: 100%;
+}
+
+.loginBtn:hover,
+.loginBtn:active {
+  background: var(--Primary-50, #eff6ff);
+  color: var(--Primary-400, #2563eb);
 }
