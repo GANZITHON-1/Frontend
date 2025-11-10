@@ -3,6 +3,7 @@ import NavigationBar from "../../../component/NavigationBar/NavigationBar";
 import "../ui/ReportPage.css";
 import uploadIcon from "../../../assets/icons/upload.svg";
 import warningIcon from "../../../assets/icons/warning.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function ReportPage() {
   const [title, setTitle] = useState("");
@@ -12,6 +13,7 @@ export default function ReportPage() {
   const [content, setContent] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -75,6 +77,7 @@ export default function ReportPage() {
             className={`input-box ${errors.address ? "error" : ""}`}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            onClick={() => navigate("/report-search")}
           />
           <input
             type="text"
