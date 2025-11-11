@@ -14,7 +14,7 @@
   object-fit: cover;
 }
 
-/* 첫 번째 슬라이드 배경 확대 효과 */
+/* 첫 번째 슬라이드 배경 확대 */
 .slide.zoom-1 .background img {
   position: relative;
   transform: scale(1.95);
@@ -24,7 +24,7 @@
   height: 90%;
 }
 
-/* 두 번째 슬라이드 배경 확대 효과 */
+/* 두 번째 슬라이드 배경 확대 */
 .slide.zoom-2 .background img {
   position: relative;
   transform: scale(0.85);
@@ -33,7 +33,7 @@
   height: 90%;
 }
 
-/* 세 번째 슬라이드 배경 확대 효과 */
+/* 세 번째 슬라이드 배경 확대 */
 .slide.zoom-3 .background img {
   position: relative;
   transform: scale(0.85);
