@@ -8,7 +8,7 @@ import axios from "axios";
  * @param {number} data.lng 경도
  * @returns
  */
-export const apiGetDataByFilter = async (data) => {
+export const apiGetMapPageDataByFilter = async (data) => {
   try {
     const res = await axios.get(`${import.meta.env.VITE_API_URL}/map/markers`, {
       withCredentials: true,
@@ -24,5 +24,42 @@ export const apiGetDataByFilter = async (data) => {
   } catch (err) {
     alert(err.response?.data?.message || "데이터 검색 오류");
     return false;
+  }
+};
+
+export const apiGetMapPagePublicData = async (markerId) => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/map/markers/public/${markerId}`, {
+      withCredentials: true,
+    });
+
+    if (res.data.success === true) {
+      return res.data.data;
+    } else if (res.data.success === false) {
+      alert(res.data.message || "데이터 검색 오류");
+      return {};
+    }
+    return {};
+  } catch (err) {
+    alert(err.response?.data?.message || "데이터 검색 오류");
+    return {};
+  }
+};
+
+export const apiGetMapPageUserData = async (markerId) => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/report/${markerId}`, {
+      withCredentials: true,
+    });
+    if (res.data.success === true) {
+      return res.data.data;
+    } else if (res.data.success === false) {
+      alert(res.data.message || "데이터 검색 오류");
+      return {};
+    }
+    return {};
+  } catch (err) {
+    alert(err.response?.data?.message || "데이터 검색 오류");
+    return {};
   }
 };
