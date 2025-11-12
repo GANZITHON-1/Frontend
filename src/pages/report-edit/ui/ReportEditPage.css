@@ -1,0 +1,44 @@
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+  flex: 1;
+  background-color: #f3f4f6;
+  color: #555;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 56px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 63px;
+}
+
+.delete-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* 수정 버튼 (항상 파란색) */
+.submit-btn {
+  flex: 2;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 56px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 161px;
+}
+
+.submit-btn:hover {
+  background-color: #0063db;
+}
