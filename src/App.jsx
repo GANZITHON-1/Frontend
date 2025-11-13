@@ -15,6 +15,9 @@ function App() {
           <Route path="/report" element={<ReportPage />} />
           <Route path="/report-search" element={<ReportSearchPage />} />
           <Route path="/report-edit" element={<ReportEditPage />} />
+
+          {/* #1 지도 페이지 (이영규) */}
+          <Route path="/map" element={<MapPage />} />
         </Routes>
       </div>
     </div>

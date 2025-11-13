@@ -8,7 +8,7 @@ import "./_index.css";
 const GpsIcon = ({ active }) => {
   return (
     <div
-      className="iconsStyleClass flexCenter"
+      className="iconsStyleClass"
       style={{
         backgroundColor: "var(--white)",
       }}>
