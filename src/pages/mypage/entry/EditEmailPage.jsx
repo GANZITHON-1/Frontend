@@ -13,7 +13,10 @@ export function EditEmailPage() {
 
   const goNext = () => {
     if (isActive) {
-      navigate("/mypage/edit", { state: { toast: "이메일을 변경했어요" } });
+      navigate("/mypage/edit", {
+        replace: true,
+        state: { toast: "이메일을 변경했어요" },
+      });
     }
   };
 
