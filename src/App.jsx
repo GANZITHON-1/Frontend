@@ -4,6 +4,8 @@ import ScrollToTop from "./hook/useScrollTop";
 import ReportPage from "./pages/report/entry/ReportPage";
 import ReportSearchPage from "./pages/report-search/entry/ReportSearchPage";
 import ReportEditPage from "./pages/report-edit/entry/ReportEditPage";
+import MapPage from "./pages/map/entry/mapPage";
+import ReportMapPage from "./pages/report-map/entry/ReportMapPage";
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
           <Route path="/report" element={<ReportPage />} />
           <Route path="/report-search" element={<ReportSearchPage />} />
           <Route path="/report-edit" element={<ReportEditPage />} />
+          <Route path="/report-map" element={<ReportMapPage />} />
 
           {/* #1 지도 페이지 (이영규) */}
           <Route path="/map" element={<MapPage />} />
