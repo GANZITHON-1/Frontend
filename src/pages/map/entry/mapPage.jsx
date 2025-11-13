@@ -271,15 +271,15 @@ const MapPage = () => {
     }
 
     const fetchData = async () => {
-      // const radius = getApproxMapRadiusKm();
-      const response = demoData;
+      const radius = getApproxMapRadiusKm();
+      // const response = demoData;
       // TEST: 데모 데이터
-      // const response = await apiGetMapPageDataByFilter({
-      //   filters: activeFilterKeys,
-      //   lat: Number(userLocation.lat) || 0,
-      //   lng: Number(userLocation.lng) || 0,
-      //   radius,
-      // });
+      const response = await apiGetMapPageDataByFilter({
+        filters: activeFilterKeys,
+        lat: Number(userLocation.lat) || 0,
+        lng: Number(userLocation.lng) || 0,
+        radius,
+      });
       setData(response || []);
 
       // 기존 마커 및 클러스터 초기화 (중복 방지)
@@ -353,21 +353,21 @@ const MapPage = () => {
    * 리스트 아이템 클릭 시 상세 데이터를 조회한다.
    */
   const onClickListItem = (item) => {
-    // if (item && item.sourceType === "USER") {
-    //   const detail = apiGetMapPageUserData(item.markerId);
+    if (item && item.sourceType === "USER") {
+      const detail = apiGetMapPageUserData(item.markerId);
 
-    //   return setSelectData(detail);
-    // } else if (item && item.sourceType === "PUBLIC") {
-    //   const detail = apiGetMapPagePublicData(item.markerId);
-    //   setResizeHeight(15.0);
-    //   setShowGpsButtons(true);
-    //   return setSelectData(detail);
-    // }
+      return setSelectData(detail);
+    } else if (item && item.sourceType === "PUBLIC") {
+      const detail = apiGetMapPagePublicData(item.markerId);
+      setResizeHeight(15.0);
+      setShowGpsButtons(true);
+      return setSelectData(detail);
+    }
     //TEST: 데모 데이터
-    setSelectData(demoDetailData);
-    setResizeHeight(15.0);
-    setShowGpsButtons(true);
-    console.log("선택");
+    // setSelectData(demoDetailData);
+    // setResizeHeight(15.0);
+    // setShowGpsButtons(true);
+    // console.log("선택");
   };
 
   return (
