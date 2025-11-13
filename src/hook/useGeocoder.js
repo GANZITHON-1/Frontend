@@ -12,7 +12,7 @@ import { useRef } from "react";
  * // 좌표를 주소로 변환
  * coordToAddress(37.5665, 126.9780).then(console.log);
  */
-export const useGeocder = () => {
+export const useGeocoder = () => {
   const geocoderRef = useRef(null);
 
   if (!geocoderRef.current && window.kakao && window.kakao.maps) {
