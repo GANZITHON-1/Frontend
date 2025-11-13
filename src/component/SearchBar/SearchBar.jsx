@@ -58,7 +58,7 @@ export default function SearchBar({ setPlaces }) {
         <img src={searchIcon} alt="검색" className="search-icon" />
         <input
           type="text"
-          placeholder="검색어를 입력하세요"
+          placeholder="지역을 검색해보세요"
           className="search-input"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

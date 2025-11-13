@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function ReportPage() {
   const navigate = useNavigate();
   const location = useLocation(); // /report-search 에서 반환된 주소 데이터 받기
+  const autoAddress = location.state?.address || "";
 
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
@@ -30,6 +31,10 @@ export default function ReportPage() {
       setLng(lng);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (autoAddress) setAddress(autoAddress);
+  }, [autoAddress]);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -122,6 +127,7 @@ export default function ReportPage() {
             className={`input-box ${errors.address ? "error" : ""}`}
             value={address}
             onClick={() => navigate("/report-search")}
+            onChange={(e) => setAddress(e.target.value)}
             readOnly
           />
           <input
