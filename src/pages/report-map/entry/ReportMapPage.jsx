@@ -15,70 +15,73 @@ export default function ReportMapPage() {
 
   const [coord, setCoord] = useState(null);
 
-  // ================ 주소를 좌표로 변환 후 상태 저장 ================
+  // 1) 주소 → 좌표 변환
   useEffect(() => {
     if (!selectedPlace) return;
 
-    async function convert() {
+    (async () => {
       try {
         const result = await addressToCoord(selectedPlace.address_name);
         const lat = Number(result.y);
         const lng = Number(result.x);
-
         setCoord({ lat, lng });
       } catch (e) {
         console.error("주소 변환 실패:", e);
       }
-    }
+    })();
+  }, [selectedPlace]);
 
-    convert();
-  }, [selectedPlace, addressToCoord]);
-
-  // ================ 지도 생성 및 핑 표시 ================
+  // 2) 지도는 "최초 1회만" 생성
   useEffect(() => {
-    if (!coord || !window.kakao?.maps) return;
+    if (!window.kakao?.maps) return;
 
     const container = document.getElementById("report-map");
     const options = {
-      center: new window.kakao.maps.LatLng(coord.lat, coord.lng),
+      center: new window.kakao.maps.LatLng(37.5665, 126.978), // 초기 기본 위치
       level: 3,
     };
 
-    // 지도 생성
     mapRef.current = new window.kakao.maps.Map(container, options);
 
-    // 기존 마커 제거
-    if (markerRef.current) markerRef.current.setMap(null);
-
-    // 핑 마커 생성
+    // 마커 생성 (최초 1회)
     const markerImg = new window.kakao.maps.MarkerImage(
       pingIcon,
       new window.kakao.maps.Size(36, 36)
     );
 
     markerRef.current = new window.kakao.maps.Marker({
-      position: new window.kakao.maps.LatLng(coord.lat, coord.lng),
+      position: mapRef.current.getCenter(),
       image: markerImg,
     });
 
     markerRef.current.setMap(mapRef.current);
-  }, [coord]);
+  }, []); // ★ 최초 1회만 실행
 
-  const handleSelect = () => {
+  // 3) 좌표가 변경되면 지도 중심만 이동시키기
+  useEffect(() => {
+    if (!coord || !mapRef.current || !markerRef.current) return;
+
+    const newCenter = new window.kakao.maps.LatLng(coord.lat, coord.lng);
+
+    // 지도 중점 이동만
+    mapRef.current.setCenter(newCenter);
+
+    // 마커만 이동
+    markerRef.current.setPosition(newCenter);
+  }, [coord]); // 지도 재생성 없음
+
+  const handleSelect = () =>
     nav("/report", {
       state: {
         address: selectedPlace.address_name,
         name: selectedPlace.place_name,
       },
     });
-  };
 
   return (
     <section className="reportMapPage">
-      {/* 지도 전체화면 */}
       <div id="report-map" className="reportMapPage-map"></div>
 
-      {/* 장소 정보 바텀 시트 */}
       {selectedPlace && (
         <div className="reportMapPage-bottomSheet">
           <p className="reportMapPage-title">{selectedPlace.place_name}</p>
