@@ -9,6 +9,10 @@ import SignupPage2 from "./pages/signup/entry/SignupPage2";
 import SignupPage3 from "./pages/signup/entry/SignupPage3";
 import LoginPage from "./pages/signup/entry/LoginPage";
 import MyPage from "./pages/mypage/entry/MyPage";
+import MyReportsPage from "./pages/mypage/entry/MyReportsPage";
+import EditPage from "./pages/mypage/entry/EditPage";
+import EditNamePage from "./pages/mypage/entry/EditNamePage";
+import EditEmailPage from "./pages/mypage/entry/EditEmailPage";
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
           <Route path="/signup3" element={<SignupPage3 />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/mypage/reports" element={<MyReportsPage />} />
+          <Route path="/mypage/edit" element={<EditPage />} />
+          <Route path="/mypage/edit/name" element={<EditNamePage />} />
+          <Route path="/mypage/edit/email" element={<EditEmailPage />} />
         </Routes>
       </div>
     </div>

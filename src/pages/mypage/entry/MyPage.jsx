@@ -5,6 +5,8 @@ import NavigationBar from "../../../component/NavigationBar/NavigationBar";
 import detailIcon from "../../../assets/icons/detail.svg";
 
 export function MyPage() {
+  const navigate = useNavigate();
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState(""); //로그아웃 or 탈퇴하기 여부
 
@@ -24,8 +26,10 @@ export function MyPage() {
       </div>
       <div className="container">
         <div className="nameTitle">마라탕</div>
-        <div className="subTitle">내 정보 수정</div>
-        <div className="box1">
+        <div className="subTitle" onClick={() => navigate("/mypage/edit")}>
+          내 정보 수정
+        </div>
+        <div className="box1" onClick={() => navigate("/mypage/reports")}>
           <div className="boxTitle">내 제보 목록</div>
           <div className="box1-1">
             <div className="boxText">제보 수정 ∙ 삭제하기</div>

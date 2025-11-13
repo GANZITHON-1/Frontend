@@ -118,7 +118,9 @@ export function OnboardingPage() {
         <button className="signupBtn" onClick={() => navigate("/signup")}>
           회원가입
         </button>
-        <button className="loginBtn">로그인</button>
+        <button className="loginBtn" onClick={() => navigate("/login")}>
+          로그인
+        </button>
       </div>
     </div>
   );
