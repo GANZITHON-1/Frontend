@@ -30,14 +30,20 @@ export function EditPage() {
         <NavigationBar title="내 정보 수정" />
       </div>
       <div className="container">
-        <div className="editBox" onClick={() => navigate("/mypage/edit/name")}>
+        <div
+          className="editBox"
+          onClick={() => navigate("/mypage/edit/name", { replace: true })}
+        >
           <div className="box1-1">
             <div className="editTitle">이름</div>
             <div className="editSubText">마라탕</div>
             <img src={detailIcon} alt="detailIcon" className="detailIcon1" />
           </div>
         </div>
-        <div className="editBox" onClick={() => navigate("/mypage/edit/email")}>
+        <div
+          className="editBox"
+          onClick={() => navigate("/mypage/edit/email", { replace: true })}
+        >
           <div className="box1-1">
             <div className="editTitle">이메일 주소</div>
             <div className="editSubText">tmxhdjf@naver.com</div>
