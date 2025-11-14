@@ -4,7 +4,7 @@ import "./_index.css";
 const BellIcon = () => {
   return (
     <div
-      className="iconsStyleClass flexCenter"
+      className="iconsStyleClass"
       style={{
         backgroundColor: "var(--orange)",
       }}>

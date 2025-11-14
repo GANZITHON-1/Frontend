@@ -1,0 +1,117 @@
+.place-page {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+  background-color: #fff;
+  font-family: "Pretendard", sans-serif;
+  box-sizing: border-box;
+}
+
+/* 검색창 영역 */
+.search-bar {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 12px 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 검색창 박스 */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #f9fafb;
+  border-radius: 100px;
+  padding: 8px 12px;
+}
+
+/* 검색 입력창 */
+.search-input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: #111827;
+  outline: none;
+  padding: 8px 10px;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+/* 아이콘 스타일 */
+.search-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.mic-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.mic-icon:hover {
+  opacity: 1;
+}
+
+/* 검색 결과 리스트 */
+.place-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 0 40px 0;
+}
+
+/* 개별 장소 */
+.place-item {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.place-item h4 {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px 0;
+  line-height: 1.4;
+}
+
+.place-item .category {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-bottom: 2px;
+}
+
+.place-item .address {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* 클릭 시 살짝 하이라이트 */
+.place-item:hover {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 6px 8px;
+  transition: background-color 0.2s ease;
+}
+
+/* 스크롤바 숨기기 */
+.place-list::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}

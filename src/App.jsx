@@ -2,6 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import SplashPage from "./pages/splash/entry/SplashPage";
 import ScrollToTop from "./hook/useScrollTop";
 import ReportPage from "./pages/report/entry/ReportPage";
+import ReportSearchPage from "./pages/report-search/entry/ReportSearchPage";
+import ReportEditPage from "./pages/report-edit/entry/ReportEditPage";
+import MapPage from "./pages/map/entry/mapPage";
+import ReportMapPage from "./pages/report-map/entry/ReportMapPage";
 import OnboardingPage from "./pages/onboarding/entry/OnboardingPage";
 import SignupPage from "./pages/signup/entry/SignupPage";
 import SignupPage1 from "./pages/signup/entry/SignupPage1";
@@ -21,7 +25,19 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<SplashPage />} />
+
+          
+
+          {/* #1 지도 페이지 (이영규) */}
+          <Route path="/map" element={<MapPage />} />
+            
+          {/* #2 제보 페이지 (엄태성 */} 
           <Route path="/report" element={<ReportPage />} />
+          <Route path="/report-search" element={<ReportSearchPage />} />
+          <Route path="/report-edit" element={<ReportEditPage />} />
+          <Route path="/report-map" element={<ReportMapPage />} />
+          
+          {/* #3 로그인/회원가입, 마이페이지 (송이림) */}
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signup1" element={<SignupPage1 />} />
@@ -33,6 +49,8 @@ function App() {
           <Route path="/mypage/edit" element={<EditPage />} />
           <Route path="/mypage/edit/name" element={<EditNamePage />} />
           <Route path="/mypage/edit/email" element={<EditEmailPage />} />
+            
+          
         </Routes>
       </div>
     </div>

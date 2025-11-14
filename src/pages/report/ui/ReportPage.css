@@ -1,0 +1,145 @@
+.report-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16.38px 21px 46px 21px;
+  font-family: "Pretendard", sans-serif;
+  background-color: #fff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 섹션 */
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* 인풋 */
+.input-box {
+  width: 100%;
+  background-color: #f9fafb;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.input-box:focus {
+  border-color: #3b82f6;
+}
+
+/* 사진 업로드 */
+.upload-box {
+  width: 100%;
+  height: 160px;
+  background-color: #f9fafb;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.upload-icon img {
+  width: 28px;
+  margin-bottom: 6px;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.hidden-input {
+  display: none;
+}
+
+/* 텍스트 영역 */
+.textarea-box {
+  width: 100%;
+  height: 120px;
+  background-color: #f9fafb;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.textarea-box:focus {
+  border-color: #3b82f6;
+}
+
+/* 버튼 */
+.submit-btn {
+  width: 161px;
+  height: 45px;
+  background-color: #eff6ff; /* 비활성화 상태 */
+  color: #2563eb;
+  border: none;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  white-space: nowrap;
+}
+
+.submit-btn.active {
+  background-color: #2563eb;
+  color: #eff6ff;
+  cursor: pointer;
+}
+
+.submit-btn.active:hover {
+  background-color: #1d4ed8;
+}
+
+/* 에러 상태 */
+.input-box.error,
+.textarea-box.error,
+.upload-box.error {
+  border: 1.5px solid #ef4444;
+  background-color: #fef2f2;
+}
+
+/* 에러 메시지 */
+.error-msg {
+  display: flex;
+  align-items: center;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.warning-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
