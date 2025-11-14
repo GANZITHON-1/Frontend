@@ -1,0 +1,195 @@
+.slide .background {
+  position: fixed;
+  width: 100%;
+  min-height: calc(100vh - 373px);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.slide .background img {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 첫 번째 슬라이드 배경 확대 */
+.slide.zoom-1 .background img {
+  position: relative;
+  transform: scale(1.95);
+  left: 170px;
+  top: 210px;
+  object-fit: cover;
+  height: 90%;
+}
+
+/* 두 번째 슬라이드 배경 확대 */
+.slide.zoom-2 .background img {
+  position: relative;
+  transform: scale(0.85);
+  top: 50px;
+  object-fit: cover;
+  height: 90%;
+}
+
+/* 세 번째 슬라이드 배경 확대 */
+.slide.zoom-3 .background img {
+  position: relative;
+  transform: scale(0.85);
+  bottom: 240px;
+  object-fit: cover;
+  height: 90%;
+}
+
+.iconsImage {
+  position: absolute;
+  width: 110px;
+  z-index: 10;
+  top: -50px;
+  right: 300px;
+}
+
+.onboarding-container {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.onboarding-swiper {
+  flex: 1 1 auto;
+  position: relative;
+  z-index: 1;
+  width: 100% !important;
+}
+
+.box {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 360px;
+  padding: 26px 0px 53px 20px;
+  background: var(--White, #fff);
+}
+
+.boldText {
+  width: 258px;
+  color: var(--Black, #000);
+  padding-bottom: 10px;
+
+  /* Title/bold01 */
+  font-family: Pretendard;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%; /* 33.6px */
+}
+
+.subText {
+  align-self: stretch;
+  color: var(--Gray-300, #9ca3af);
+
+  /* Body/medium02 */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%; /* 21px */
+}
+
+/* swiper */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  position: absolute !important;
+  bottom: 170px !important;
+  width: 100%;
+  z-index: 500 !important;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #e5e7eb;
+  opacity: 1;
+  margin: 0 4px !important;
+  transition: background-color 0.3s;
+}
+
+.swiper-pagination-bullet-active {
+  background: #3b82f6;
+}
+
+/* 로그인/회원가입 버튼 */
+.buttonBox {
+  display: flex;
+  width: 335px;
+  flex-direction: column;
+  gap: 8px;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  z-index: 200;
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.signupBtn {
+  display: flex;
+  height: 50px;
+  padding: 14px 56px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 100px;
+  background: var(--Primary-400, #2563eb);
+  border: none;
+  color: var(--Primary-50, #eff6ff);
+  width: 100%;
+}
+
+.signupBtn:hover,
+.signupBtn:active {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    ),
+    #2563eb;
+}
+
+.loginBtn {
+  display: flex;
+  height: 50px;
+  padding: 14px 56px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 100px;
+  border: 1px solid var(--Gray-200, #e5e7eb);
+  background: var(--White, #fff);
+  color: var(--Gray-300, #9ca3af);
+  width: 100%;
+}
+
+.loginBtn:hover,
+.loginBtn:active {
+  background: var(--Primary-50, #eff6ff);
+  color: var(--Primary-400, #2563eb);
+}
