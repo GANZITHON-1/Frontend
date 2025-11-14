@@ -4,7 +4,7 @@ import { useRef } from "react";
  * 카카오맵 Geocoder를 활용한 주소 <-> 좌표 변환 커스텀 훅이다.
  *
  * 사용 예시:
- * const { addressToCoord, coordToAddress } = useGeocder();
+ * const { addressToCoord, coordToAddress } = useGeocoder();
  *
  * // 주소를 좌표로 변환
  * addressToCoord("서울특별시 중구 세종대로 110").then(console.log);

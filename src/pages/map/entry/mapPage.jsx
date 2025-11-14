@@ -302,11 +302,18 @@ const MapPage = () => {
       });
       setData(response || []);
 
-      // 기존 마커 제거 (중복 방지)
-      if (window._demoMarkers && Array.isArray(window._demoMarkers)) {
-        window._demoMarkers.forEach((m) => m.setMap(null));
+      // 기존 마커 및 클러스터 초기화 (중복 방지)
+      if (window._clusterer) {
+        window._clusterer.clear();
       }
-      window._demoMarkers = [];
+      if (window._markers && Array.isArray(window._markers)) {
+        window._markers.forEach((marker) => marker.setMap(null));
+      }
+      window._markers = [];
+      if (window._pingMarker) {
+        window._pingMarker.setMap(null);
+        window._pingMarker = null;
+      }
 
       // filterType별 아이콘 매핑
       const iconMap = {
@@ -317,45 +324,45 @@ const MapPage = () => {
         bell: bellIcon,
       };
 
-      // 마커 생성
+      // 마커 및 클러스터러 생성 (카카오 Marker/MarkerClusterer 사용)
       if (mapRef.current && window.kakao?.maps && Array.isArray(response)) {
-        response.forEach((item) => {
-          const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
-          const markerDiv = document.createElement("div");
-          markerDiv.style.width = "24px";
-          markerDiv.style.height = "24px";
-          markerDiv.style.display = "flex";
-          markerDiv.style.alignItems = "center";
-          markerDiv.style.justifyContent = "center";
-          markerDiv.innerHTML = `<img src="${iconSrc}" alt="marker" style="width:24px;height:24px;" />`;
-
-          const overlay = new window.kakao.maps.CustomOverlay({
-            position: new window.kakao.maps.LatLng(item.lat, item.lng),
-            content: markerDiv,
-            yAnchor: 0.5,
-            xAnchor: 0.5,
+        if (!window._clusterer) {
+          window._clusterer = new window.kakao.maps.MarkerClusterer({
+            map: mapRef.current,
+            averageCenter: true,
+            minLevel: 6,
+            gridSize: 40,
           });
-          overlay.setMap(mapRef.current);
-          window._demoMarkers.push(overlay);
-        });
+        }
 
-        // 모든 마커 생성 후, location 조건에 맞으면 pingIcon 마커를 마지막에 생성
+        const markers = response
+          .filter((item) => typeof item.lat === "number" && typeof item.lng === "number")
+          .map((item) => {
+            const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
+            const markerImage = new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(24, 24), {
+              offset: new window.kakao.maps.Point(12, 24),
+            });
+            const marker = new window.kakao.maps.Marker({
+              position: new window.kakao.maps.LatLng(item.lat, item.lng),
+              image: markerImage,
+            });
+            window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
+            return marker;
+          });
+
+        window._clusterer.addMarkers(markers);
+        window._markers = markers;
+
         if (location && location.lat && location.lng) {
-          const pingDiv = document.createElement("div");
-          pingDiv.style.width = "32px";
-          pingDiv.style.height = "32px";
-          pingDiv.style.display = "flex";
-          pingDiv.style.alignItems = "center";
-          pingDiv.style.justifyContent = "center";
-          pingDiv.innerHTML = `<img src="${pingIcon}" alt="ping" style="width:32px;height:32px;" />`;
-
-          const pingOverlay = new window.kakao.maps.CustomOverlay({
+          const pingMarker = new window.kakao.maps.Marker({
             position: new window.kakao.maps.LatLng(location.lat, location.lng),
-            content: pingDiv,
-            yAnchor: 0.5,
-            xAnchor: 0.5,
+            image: new window.kakao.maps.MarkerImage(pingIcon, new window.kakao.maps.Size(32, 32), {
+              offset: new window.kakao.maps.Point(16, 32),
+            }),
+            zIndex: 1000,
           });
-          pingOverlay.setMap(mapRef.current);
+          pingMarker.setMap(mapRef.current);
+          window._pingMarker = pingMarker;
         }
       }
     };
@@ -380,7 +387,7 @@ const MapPage = () => {
     // setSelectData(demoDetailData);
     // setResizeHeight(15.0);
     // setShowGpsButtons(true);
-    console.log("선택");
+    // console.log("선택");
   };
 
   return (
