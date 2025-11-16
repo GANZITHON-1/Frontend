@@ -26,17 +26,15 @@ function App() {
         <Routes>
           <Route path="/" element={<SplashPage />} />
 
-          
-
           {/* #1 지도 페이지 (이영규) */}
           <Route path="/map" element={<MapPage />} />
-            
-          {/* #2 제보 페이지 (엄태성 */} 
+
+          {/* #2 제보 페이지 (엄태성 */}
           <Route path="/report" element={<ReportPage />} />
           <Route path="/report-search" element={<ReportSearchPage />} />
           <Route path="/report-edit" element={<ReportEditPage />} />
           <Route path="/report-map" element={<ReportMapPage />} />
-          
+
           {/* #3 로그인/회원가입, 마이페이지 (송이림) */}
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -49,8 +47,6 @@ function App() {
           <Route path="/mypage/edit" element={<EditPage />} />
           <Route path="/mypage/edit/name" element={<EditNamePage />} />
           <Route path="/mypage/edit/email" element={<EditEmailPage />} />
-            
-          
         </Routes>
       </div>
     </div>
