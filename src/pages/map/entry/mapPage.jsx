@@ -8,7 +8,7 @@ import gps_move from "../../../assets/map/gps_move.png";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 import { apiGetMapPageDataByFilter, apiGetMapPagePublicData, apiGetMapPageUserData } from "../../../api/map";
-import { demoData, demoDetailData } from "../../../demoData/data";
+// import { demoData, demoDetailData } from "../../../demoData/data";
 import CctvIcon from "../../../component/icons/cctvIcon";
 import CarIcon from "../../../component/icons/carIcon";
 import BellIcon from "../../../component/icons/bellIcon";
@@ -567,7 +567,7 @@ const MapPage = () => {
       {/* =====/ 하단 시트 영역 ===== */}
 
       {/* ===== 지도 영역 ===== */}
-      <div id="map" style={{ width: "100vw", height: "90vh" }}></div>
+      <div id="map" style={{ width: "100%", height: "100%" }}></div>
       {/* =====/ 지도 영역 ===== */}
     </section>
   );
