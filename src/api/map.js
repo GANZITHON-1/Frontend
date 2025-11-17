@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "./index";
 
 /**
  * 필터에 따른 데이터 조회 API
@@ -10,9 +10,8 @@ import axios from "axios";
  */
 export const apiGetMapPageDataByFilter = async (data) => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/map/markers`, {
-      withCredentials: true,
-      params: data, // GET 요청에서 데이터 전달
+    const res = await api.get("/map/markers", {
+      params: data,
     });
     if (res.data.success === true) {
       return res.data.data;
@@ -29,10 +28,7 @@ export const apiGetMapPageDataByFilter = async (data) => {
 
 export const apiGetMapPagePublicData = async (markerId) => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/map/markers/public/${markerId}`, {
-      withCredentials: true,
-    });
-
+    const res = await api.get(`/map/markers/public/${markerId}`);
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
@@ -48,9 +44,7 @@ export const apiGetMapPagePublicData = async (markerId) => {
 
 export const apiGetMapPageUserData = async (markerId) => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/report/${markerId}`, {
-      withCredentials: true,
-    });
+    const res = await api.get(`/report/${markerId}`);
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
