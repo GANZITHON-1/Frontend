@@ -20,8 +20,10 @@ import CarIcon from "../../../component/icons/carIcon";
 import BellIcon from "../../../component/icons/bellIcon";
 import DetalIcon from "../../../component/icons/detalIcon";
 import useDistance from "../../../hook/useDistance";
+
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import MapPageSearchBar from "../../../component/MapSearchBar/MapSearchBar";
 import MapSeverity from "../../../component/MapSeverity/MapSeverity";
 
@@ -43,18 +45,23 @@ const FILTER_OPTIONS = [
 const MapPage = () => {
   const nav = useNavigate();
 
-  //  검색 결과로 전달되는 값 (좌표)
+  // 검색에서 넘어온 state
   const state = useLocation().state;
   const searchLat = state?.lat;
   const searchLng = state?.lng;
   const searchKeyword = state?.search;
 
-  // 지도 관련
+  // 지도 ref
   const mapRef = useRef(null);
-  const markerRef = useRef(null);
+  const userMarkerRef = useRef(null);
 
+  // 검색 키워드 표시용
   const [place, setPlace] = useState(searchKeyword || "");
+
+  // 데이터 및 상태
   const [data, setData] = useState([]);
+  const [selectData, setSelectData] = useState({});
+  const [isTracking, setIsTracking] = useState(false);
 
   const [userLocation, setUserLocation] = useState({
     lat: null,
@@ -62,12 +69,10 @@ const MapPage = () => {
     heading: null,
   });
 
-  const [isTracking, setIsTracking] = useState(false);
+  const distance = useDistance();
+
   const [showGpsButtons, setShowGpsButtons] = useState(true);
   const [resizeHeight, setResizeHeight] = useState(15.0);
-
-  const [selectData, setSelectData] = useState({});
-  const distance = useDistance();
 
   // 필터
   const [filters, setFilters] = useState(() =>
@@ -76,109 +81,87 @@ const MapPage = () => {
       return acc;
     }, {})
   );
+
+  // 활성 필터 계산
   const activeFilterKeys = useMemo(
     () => Object.keys(filters).filter((key) => filters[key]),
     [filters]
   );
 
-  // 지도 반경 계산
+  // 지도 반경
   const getApproxMapRadiusKm = () => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
-    const levelToRadius = { 3: 2, 4: 4, 5: 8, 6: 16, 7: 32 };
-    return levelToRadius[level] || 2;
+    const levels = { 3: 2, 4: 4, 5: 8, 6: 16, 7: 32 };
+    return levels[level] || 2;
   };
 
-  // 권한 체크
-  const checkGeolocationPermission = useCallback(async () => {
-    if (!navigator.geolocation) {
-      alert("이 브라우저에서는 위치 정보가 지원되지 않습니다.");
-      return false;
-    }
-
-    if (!navigator.permissions?.query) return true;
-
-    try {
-      const status = await navigator.permissions.query({ name: "geolocation" });
-      if (status.state === "denied") {
-        alert("위치 정보 권한이 거부되었습니다.");
-        return false;
-      }
-      return true;
-    } catch {
-      return true;
-    }
-  }, []);
-
-  /**
-   * 지도 중심 이동
-   */
+  // 지도 중심 이동
   const moveMapCenter = useCallback((lat, lng) => {
     if (!mapRef.current || !window.kakao?.maps) return;
     const center = new window.kakao.maps.LatLng(lat, lng);
     mapRef.current.setCenter(center);
   }, []);
 
-  /**
-   * GPS 사용자 마커 업데이트
-   */
+  // 사용자 GPS 마커
   const updateUserMarker = useCallback(
     (lat, lng, heading, tracking = false) => {
       if (!mapRef.current || !window.kakao?.maps) return;
-      if (typeof lat !== "number" || typeof lng !== "number") return;
 
       const position = new window.kakao.maps.LatLng(lat, lng);
-      const hasHeading = typeof heading === "number";
+      const hasHeading = typeof heading === "number" && !Number.isNaN(heading);
 
-      if (!markerRef.current) {
+      if (!userMarkerRef.current) {
         const container = document.createElement("div");
         container.className = "mapPage-gpsMarker";
 
         const img = document.createElement("img");
-        img.alt = "사용자 위치";
+        img.alt = "user";
         container.appendChild(img);
 
         const overlay = new window.kakao.maps.CustomOverlay({
-          position,
           content: container,
-          yAnchor: 0.5,
+          position,
           xAnchor: 0.5,
+          yAnchor: 0.5,
         });
 
         overlay.setMap(mapRef.current);
-        markerRef.current = { overlay, container, img };
+        userMarkerRef.current = { overlay, img, container };
       }
 
-      markerRef.current.overlay.setPosition(position);
-      markerRef.current.img.src = tracking ? gps_move : gps_stop;
-      markerRef.current.container.style.transform = hasHeading
+      userMarkerRef.current.overlay.setPosition(position);
+      userMarkerRef.current.img.src = tracking ? gps_move : gps_stop;
+      userMarkerRef.current.container.style.transform = hasHeading
         ? `translate(-50%, -50%) rotate(${heading}deg)`
-        : `translate(-50%, -50%)`;
+        : "translate(-50%, -50%)";
     },
     []
   );
 
-  /**
-   * 현재 위치로 이동
-   */
-  const moveToCurrentLocation = useCallback(async () => {
-    const allowed = await checkGeolocationPermission();
-    if (!allowed) return;
+  // 현재 위치 가져와 지도 이동
+  const moveToCurrentLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      alert("위치 정보를 가져올 수 없습니다.");
+      return;
+    }
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        const { latitude, longitude } = coords;
-        setUserLocation({ lat: latitude, lng: longitude, heading: null });
-        moveMapCenter(latitude, longitude);
-        updateUserMarker(latitude, longitude, null, false);
+        setUserLocation({
+          lat: coords.latitude,
+          lng: coords.longitude,
+          heading: null,
+        });
+        moveMapCenter(coords.latitude, coords.longitude);
+        updateUserMarker(coords.latitude, coords.longitude, null, false);
       },
-      () => alert("위치 정보를 가져올 수 없습니다.")
+      () => alert("현재 위치를 불러올 수 없습니다."),
+      { enableHighAccuracy: true }
     );
-  }, [checkGeolocationPermission, moveMapCenter, updateUserMarker]);
+  }, [moveMapCenter, updateUserMarker]);
 
-  /**
-   * 지도 초기화
-   */
+  // 지도 초기화
   useEffect(() => {
     if (!window.kakao?.maps) return;
 
@@ -190,25 +173,31 @@ const MapPage = () => {
 
     mapRef.current = new window.kakao.maps.Map(container, options);
 
-    // 🔥 검색해서 들어온 위치가 있다면 그 위치로 이동
+    // 검색으로 들어온 경우 그 위치로 이동
     if (searchLat && searchLng) {
-      setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
       setPlace(searchKeyword || "");
+      setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
       moveMapCenter(searchLat, searchLng);
       return;
     }
 
+    // 기본: 현재 위치
     moveToCurrentLocation();
-  }, [searchLat, searchLng, searchKeyword, moveToCurrentLocation]);
+  }, [
+    searchLat,
+    searchLng,
+    searchKeyword,
+    moveMapCenter,
+    moveToCurrentLocation,
+  ]);
 
-  /**
-   * 지도 마커 + 핑 마커 표시
-   */
+  // 지도 데이터 및 핑 마커 표시
   useEffect(() => {
-    if (userLocation.lat === null || userLocation.lng === null) return;
+    if (!userLocation.lat || !userLocation.lng) return;
 
     const fetchData = async () => {
       const radius = getApproxMapRadiusKm();
+
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
         lat: userLocation.lat,
@@ -218,18 +207,15 @@ const MapPage = () => {
 
       setData(response || []);
 
-      // 기존 마커 정리
+      // 기존 마커 제거
       if (window._clusterer) window._clusterer.clear();
-      if (window._markers) {
-        window._markers.forEach((m) => m.setMap(null));
-      }
+      if (window._markers) window._markers.forEach((m) => m.setMap(null));
       window._markers = [];
       if (window._pingMarker) {
         window._pingMarker.setMap(null);
         window._pingMarker = null;
       }
 
-      // 아이콘 매핑
       const iconMap = {
         user: reportIcon,
         police: detalIcon,
@@ -238,6 +224,7 @@ const MapPage = () => {
         bell: bellIcon,
       };
 
+      // 클러스터 설정
       if (mapRef.current && window.kakao?.maps) {
         if (!window._clusterer) {
           window._clusterer = new window.kakao.maps.MarkerClusterer({
@@ -251,29 +238,26 @@ const MapPage = () => {
         const markers = (response || [])
           .filter((item) => item.lat && item.lng)
           .map((item) => {
-            const iconSrc =
-              iconMap[item.filterType?.toLowerCase()] || reportIcon;
+            const icon = iconMap[item.filterType] || reportIcon;
 
             const marker = new window.kakao.maps.Marker({
               position: new window.kakao.maps.LatLng(item.lat, item.lng),
               image: new window.kakao.maps.MarkerImage(
-                iconSrc,
-                new window.kakao.maps.Size(24, 24),
-                { offset: new window.kakao.maps.Point(12, 24) }
+                icon,
+                new window.kakao.maps.Size(24, 24)
               ),
             });
 
             window.kakao.maps.event.addListener(marker, "click", () =>
               onClickListItem(item)
             );
-
             return marker;
           });
 
         window._clusterer.addMarkers(markers);
         window._markers = markers;
 
-        //  검색 위치 핑 생성
+        // 검색 핑 표시
         if (searchLat && searchLng) {
           const pingMarker = new window.kakao.maps.Marker({
             position: new window.kakao.maps.LatLng(searchLat, searchLng),
@@ -284,7 +268,6 @@ const MapPage = () => {
             ),
             zIndex: 1000,
           });
-
           pingMarker.setMap(mapRef.current);
           window._pingMarker = pingMarker;
         }
@@ -300,13 +283,11 @@ const MapPage = () => {
     searchLng,
   ]);
 
-  /**
-   * 리스트 선택 시 상세보기
-   */
+  // 리스트 항목 클릭
   const onClickListItem = (item) => {
     if (item.sourceType === "USER") {
       setSelectData(apiGetMapPageUserData(item.markerId));
-    } else if (item.sourceType === "PUBLIC") {
+    } else {
       setSelectData(apiGetMapPagePublicData(item.markerId));
       setResizeHeight(15.0);
       setShowGpsButtons(true);
@@ -315,7 +296,6 @@ const MapPage = () => {
 
   return (
     <section className="mapPage">
-      {/* ===== 검색바 영역 ===== */}
       <div className="mapPage-searchBar">
         <MapPageSearchBar
           place={place}
@@ -326,16 +306,31 @@ const MapPage = () => {
           <SettingIcon />
         </div>
       </div>
-      {/* =====/ 검색바 영역 ===== */}
 
-      {/* ===== 하단 시트 ===== */}
       <Resizable
         className="mapPage-bottomSheet"
         defaultSize={{ width: "100%", height: "15vh" }}
         size={{ width: "100%", height: `${resizeHeight}vh` }}
         maxHeight="75vh"
         minHeight="15vh"
-        enable={{ top: true }}
+        enable={{ top: true, right: false, bottom: false, left: false }}
+        handleStyles={{
+          top: {
+            height: "32px",
+            width: "100%",
+            cursor: "ns-resize",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 1000,
+          },
+        }}
+        handleComponent={{
+          top: <div className="mapPage-bottomSheetBar" />,
+        }}
         onResize={(e, direction, ref) => {
           const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
           setShowGpsButtons(vh <= 7.7);
@@ -344,7 +339,6 @@ const MapPage = () => {
           const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
           setResizeHeight(Number(vh.toFixed(3)));
         }}
-        handleComponent={{ top: <div className="mapPage-bottomSheetBar" /> }}
       >
         <div className="mapPage-bottomSheetContent">
           {showGpsButtons && (
@@ -358,7 +352,6 @@ const MapPage = () => {
             </div>
           )}
 
-          {/* 데이터 리스트 */}
           {Object.keys(selectData).length === 0 && (
             <>
               <div className="mapPage-filterList">
@@ -369,10 +362,7 @@ const MapPage = () => {
                       filters[key] ? " mapPage-filterItem--active" : ""
                     }`}
                     onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        [key]: !prev[key],
-                      }))
+                      setFilters((prev) => ({ ...prev, [key]: !prev[key] }))
                     }
                   >
                     {label}
@@ -381,7 +371,7 @@ const MapPage = () => {
               </div>
 
               <div className="mapPage-list scroll">
-                {data?.map((item, idx) => (
+                {data.map((item, idx) => (
                   <div
                     key={idx}
                     className="mapPage-list-item"
@@ -397,6 +387,7 @@ const MapPage = () => {
 
                     <div className="mapPage-list-item-content">
                       <p className="sub-title-3">{item.title}</p>
+
                       <div className="body-2">
                         <span>
                           {Math.round(
@@ -419,13 +410,10 @@ const MapPage = () => {
             </>
           )}
 
-          {/* 공개 데이터 상세 */}
           {selectData.sourceType === "PUBLIC" && (
             <div className="mapPage-public-detail">
-              <div>
-                <p className="sub-title-2">{selectData.title}</p>
-                <MapSeverity severity={selectData.severity} />
-              </div>
+              <p className="sub-title-2">{selectData.title}</p>
+              <MapSeverity severity={selectData.severity} />
               <p className="body-3">{selectData.filterType}</p>
               <p className="body-2">
                 {selectData.location}
@@ -440,30 +428,23 @@ const MapPage = () => {
             </div>
           )}
 
-          {/* 제보 상세 */}
           {selectData.report && (
             <div className="mapPage-public-detail scroll">
-              <div className="mapPage-public-detail-title">
-                <div>
-                  <p className="sub-title-2">{selectData.report.title}</p>
-                  <MapSeverity severity={selectData.aiAnalysis.severityLevel} />
-                </div>
-                <p className="body-3">이웃 제보</p>
-                <p className="body-2">
-                  {selectData.report.lotAddress}
-                  <span
-                    onClick={() =>
-                      navigator.clipboard.writeText(
-                        selectData.report.lotAddress
-                      )
-                    }
-                  >
-                    복사
-                  </span>
-                </p>
+              <div>
+                <p className="sub-title-2">{selectData.report.title}</p>
+                <MapSeverity severity={selectData.aiAnalysis.severityLevel} />
               </div>
-
-              <div className="mapPage-public-image" />
+              <p className="body-3">이웃 제보</p>
+              <p className="body-2">
+                {selectData.report.lotAddress}
+                <span
+                  onClick={() =>
+                    navigator.clipboard.writeText(selectData.report.lotAddress)
+                  }
+                >
+                  복사
+                </span>
+              </p>
 
               <div className="mapPage-ai">
                 <p className="sub-title-4">AI요약</p>
@@ -479,7 +460,6 @@ const MapPage = () => {
         </div>
       </Resizable>
 
-      {/* 지도 */}
       <div id="map" style={{ width: "100vw", height: "90vh" }}></div>
     </section>
   );
