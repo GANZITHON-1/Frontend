@@ -4,17 +4,19 @@ import "../ui/ReportPage.css";
 import uploadIcon from "../../../assets/icons/upload.svg";
 import warningIcon from "../../../assets/icons/warning.svg";
 import { useNavigate, useLocation } from "react-router-dom";
+import { api } from "../../../api/index"; // 공용 axios 인스턴스
 
 export default function ReportPage() {
   const navigate = useNavigate();
-  const location = useLocation(); // /report-search 에서 반환된 주소 데이터 받기
+  const location = useLocation();
+
   const autoAddress = location.state?.address || "";
 
   const [title, setTitle] = useState(location.state?.prevTitle || "");
   const [address, setAddress] = useState("");
   const [detail, setDetail] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [photoFile, setPhotoFile] = useState(null); // 실제 파일 업로드용
+  const [photoFile, setPhotoFile] = useState(null);
   const [content, setContent] = useState("");
   const [lat, setLat] = useState(null);
   const [lng, setLng] = useState(null);
@@ -26,6 +28,7 @@ export default function ReportPage() {
     if (location.state?.selectedAddress) {
       const { roadAddress, lotAddress, lat, lng } =
         location.state.selectedAddress;
+
       setAddress(roadAddress || lotAddress || "");
       setLat(lat);
       setLng(lng);
@@ -36,15 +39,16 @@ export default function ReportPage() {
     if (autoAddress) setAddress(autoAddress);
   }, [autoAddress]);
 
+  // 사진 업로드
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPhoto(URL.createObjectURL(file)); // 미리보기
+      setPhoto(URL.createObjectURL(file));
       setPhotoFile(file);
     }
   };
 
-  // 모든 항목 입력 여부 확인
+  // 입력 감지 → 버튼 활성화
   useEffect(() => {
     const filled =
       title.trim() &&
@@ -55,18 +59,21 @@ export default function ReportPage() {
     setIsActive(!!filled);
   }, [title, address, detail, content, photo]);
 
-  // 등록 요청
+  /**
+   * 제보 제출
+   * fetch → api.post (axios)로 변경
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
 
+    const newErrors = {};
     if (!title.trim()) newErrors.title = "제목을 입력해 주세요.";
     if (!address.trim() || !detail.trim())
       newErrors.address = "위치를 선택해 주세요.";
     if (!photo) newErrors.photo = "사진을 업로드 해주세요.";
     if (content.trim().length < 30) newErrors.content = "설명을 입력해 주세요.";
-    setErrors(newErrors);
 
+    setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
     try {
@@ -74,27 +81,25 @@ export default function ReportPage() {
 
       formData.append("title", title);
       formData.append("description", content);
-      formData.append("image", photoFile); // 파일업로드
+      formData.append("image", photoFile);
       formData.append("roadAddress", address);
       formData.append("lotAddress", detail);
       formData.append("latitude", lat);
       formData.append("longitude", lng);
       formData.append("sourceType", "USER");
 
-      const response = await fetch("/report", {
-        method: "POST",
-        body: formData,
+      // ★ axios api 인스턴스 사용 (JWT 자동 포함)
+      const response = await api.post("/report", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      if (!response.ok) throw new Error("제보 등록 실패");
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.message || "제보 등록 실패");
+      if (!response.data?.success) {
+        throw new Error(response.data?.message || "제보 등록 실패");
       }
 
-      // 지도 페이지로 이동 + 토스트용 flag 전달
+      // 제보 성공 → MapPage로 이동
       navigate("/map", {
         state: { reportSuccess: true },
       });
@@ -103,6 +108,7 @@ export default function ReportPage() {
       alert("제보 등록 중 오류가 발생했습니다.");
     }
   };
+
   return (
     <div>
       <NavigationBar title="제보하기" />
@@ -138,11 +144,10 @@ export default function ReportPage() {
               navigate("/report-search", {
                 state: {
                   prevTitle: title,
-                  mode: "report", // 제보용 검색 모드
+                  mode: "report",
                 },
               })
             }
-            onChange={(e) => setAddress(e.target.value)}
             readOnly
           />
           <input
