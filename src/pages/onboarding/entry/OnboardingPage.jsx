@@ -98,7 +98,7 @@ export function OnboardingPage() {
                   : ""
               }`}
             >
-              <div className="background">
+              <div className="onboarding-background">
                 <img src={slide.bgImage} alt={`bg-${slide.id}`} />
                 {slide.hasIcons && (
                   <div className="iconsImage">
