@@ -3,22 +3,21 @@ import SearchBar from "../../../component/SearchBar/SearchBar";
 import PlaceList from "../../../component/SearchBar/PlaceList";
 import NavigationBar from "../../../component/NavigationBar/NavigationBar";
 import "../ui/ReportSearchPage.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function ReportSearchPage() {
   const [places, setPlaces] = useState([]);
-  const nav = useNavigate();
+  const location = useLocation();
 
   return (
     <div>
       <NavigationBar title="" />
       <div className="search-page">
         <SearchBar setPlaces={setPlaces} />
+
         <PlaceList
           places={places}
-          onSelect={(place) => {
-            nav("/report-map", { state: { selectedPlace: place } });
-          }}
+          prevTitle={location.state?.prevTitle} // 여기 추가해야 제목이 유지됨
         />
       </div>
     </div>

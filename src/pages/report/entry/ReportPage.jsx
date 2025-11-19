@@ -10,7 +10,7 @@ export default function ReportPage() {
   const location = useLocation(); // /report-search 에서 반환된 주소 데이터 받기
   const autoAddress = location.state?.address || "";
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(location.state?.prevTitle || "");
   const [address, setAddress] = useState("");
   const [detail, setDetail] = useState("");
   const [photo, setPhoto] = useState(null);
@@ -23,14 +23,14 @@ export default function ReportPage() {
 
   // /report-search에서 선택된 주소값 받아오기
   useEffect(() => {
-    if (location.state && location.state.selectedAddress) {
+    if (location.state?.selectedAddress) {
       const { roadAddress, lotAddress, lat, lng } =
         location.state.selectedAddress;
       setAddress(roadAddress || lotAddress || "");
       setLat(lat);
       setLng(lng);
     }
-  }, [location]);
+  }, [location.state?.selectedAddress]);
 
   useEffect(() => {
     if (autoAddress) setAddress(autoAddress);
@@ -71,14 +71,14 @@ export default function ReportPage() {
 
     try {
       const formData = new FormData();
-      formData.append("userId", 1); // 실제 로그인 사용자 id로 대체
+
       formData.append("title", title);
       formData.append("description", content);
-      formData.append("image", photoFile); // 백엔드에서 imageUrl 생성
+      formData.append("image", photoFile); // 파일업로드
       formData.append("roadAddress", address);
       formData.append("lotAddress", detail);
-      formData.append("locationLat", lat || 0);
-      formData.append("locationLng", lng || 0);
+      formData.append("latitude", lat);
+      formData.append("longitude", lng);
       formData.append("sourceType", "USER");
 
       const response = await fetch("/report", {
@@ -87,14 +87,22 @@ export default function ReportPage() {
       });
 
       if (!response.ok) throw new Error("제보 등록 실패");
-      alert("제보가 등록되었습니다.");
-      navigate("/report-list");
-    } catch (err) {
-      console.error(err);
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "제보 등록 실패");
+      }
+
+      // 지도 페이지로 이동 + 토스트용 flag 전달
+      navigate("/map", {
+        state: { reportSuccess: true },
+      });
+    } catch (error) {
+      console.error(error);
       alert("제보 등록 중 오류가 발생했습니다.");
     }
   };
-
   return (
     <div>
       <NavigationBar title="제보하기" />
@@ -126,7 +134,11 @@ export default function ReportPage() {
             placeholder="건물, 지번 또는 도로명 검색"
             className={`input-box ${errors.address ? "error" : ""}`}
             value={address}
-            onClick={() => navigate("/report-search")}
+            onClick={() =>
+              navigate("/report-search", {
+                state: { prevTitle: title },
+              })
+            }
             onChange={(e) => setAddress(e.target.value)}
             readOnly
           />
