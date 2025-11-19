@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../ui/SignupPage.css";
 import NavigationBar from "../../../component/NavigationBar/NavigationBar";
+import "../ui/SignupPage.css";
 
 export function SignupPage() {
   const navigate = useNavigate();
@@ -17,12 +17,13 @@ export function SignupPage() {
   // 두 입력값이 모두 있을 때만 버튼 활성화
   const isActive = isNameFilled && email.trim() !== "";
 
-  const handleNameChange = (e) => {
-    const newName = e.target.value;
-    setName(newName);
+  const cleanInput = (value) => value.replace(/\u200B/g, "").trim();
 
-    //이름 채워지는 순간 이메일 필드는 고정
-    if (newName.trim() !== "" && !isEmailVisible) {
+  const handleNameChange = (e) => {
+    const cleaned = cleanInput(e.target.value);
+    setName(cleaned);
+
+    if (cleaned !== "" && !isEmailVisible) {
       setIsEmailVisible(true);
     }
   };
@@ -58,6 +59,7 @@ export function SignupPage() {
             placeholder="홍길동"
             value={name}
             onChange={handleNameChange}
+            autoComplete="off"
           ></input>
         </div>
         {renderEmail && (
@@ -68,6 +70,7 @@ export function SignupPage() {
               placeholder="abcde@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
             ></input>
           </div>
         )}

@@ -1,4 +1,4 @@
-.slide .background {
+.slide .onboarding-background {
   position: fixed;
   width: 100%;
   min-height: calc(100vh - 373px);
@@ -6,7 +6,7 @@
   z-index: 0;
 }
 
-.slide .background img {
+.slide .onboarding-background img {
   position: fixed;
   display: block;
   width: 100%;
@@ -15,7 +15,7 @@
 }
 
 /* 첫 번째 슬라이드 배경 확대 */
-.slide.zoom-1 .background img {
+.slide.zoom-1 .onboarding-background img {
   position: relative;
   transform: scale(1.95);
   left: 170px;
@@ -25,7 +25,7 @@
 }
 
 /* 두 번째 슬라이드 배경 확대 */
-.slide.zoom-2 .background img {
+.slide.zoom-2 .onboarding-background img {
   position: relative;
   transform: scale(0.85);
   top: 50px;
@@ -34,7 +34,7 @@
 }
 
 /* 세 번째 슬라이드 배경 확대 */
-.slide.zoom-3 .background img {
+.slide.zoom-3 .onboarding-background img {
   position: relative;
   transform: scale(0.85);
   bottom: 240px;

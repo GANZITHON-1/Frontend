@@ -357,7 +357,7 @@
   opacity: 0;
 }
 
-.input::placeholder {
+.custom-input::placeholder {
   color: var(--Gray-300, #9ca3af);
 
   /* Body/medium02 */
@@ -368,11 +368,11 @@
   line-height: 150%; /* 21px */
 }
 
-.input:focus {
+.custom-input:focus {
   outline: none;
 }
 
-.input {
+.custom-input {
   border: 1px solid var(--Gray-200, #e5e7eb);
   background: #fff;
   color: var(--Black, #000);

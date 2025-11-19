@@ -47,6 +47,19 @@ export function SignupPage3() {
           setIsSuccess(true);
           console.log("회원가입 성공", response.data);
 
+          // ID 저장(탈퇴 기능에 필요)
+          if (response.data.data.userId) {
+            localStorage.setItem(
+              "user_id",
+              response.data.data.userId.toString()
+            );
+          }
+
+          // 사용자 이름 저장(마이페이지 사용)
+          if (response.data.data.name) {
+            localStorage.setItem("user_name", response.data.data.name);
+          }
+
           // 폭죽
           confetti({
             particleCount: 100,

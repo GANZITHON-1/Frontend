@@ -7,5 +7,19 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+
+    // proxy 추가
+    proxy: {
+      "/auth": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/mypage": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });
