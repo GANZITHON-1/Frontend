@@ -136,7 +136,10 @@ export default function ReportPage() {
             value={address}
             onClick={() =>
               navigate("/report-search", {
-                state: { prevTitle: title },
+                state: {
+                  prevTitle: title,
+                  mode: "report", // 제보용 검색 모드
+                },
               })
             }
             onChange={(e) => setAddress(e.target.value)}
