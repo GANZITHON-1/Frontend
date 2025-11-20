@@ -20,6 +20,16 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/report": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/image": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });
