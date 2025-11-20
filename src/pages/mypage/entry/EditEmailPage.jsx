@@ -12,6 +12,7 @@ const isValidEmail = (email) => {
 
 export function EditEmailPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // EditPage에서 전달받은 현재 이름/이메일
   const currentName = location.state?.currentName || "사용자 이름";
