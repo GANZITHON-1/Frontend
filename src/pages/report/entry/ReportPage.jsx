@@ -88,15 +88,40 @@ export default function ReportPage() {
       formData.append("longitude", lng);
       formData.append("sourceType", "USER");
 
-      // ★ axios api 인스턴스 사용 (JWT 자동 포함)
-      const response = await api.post("/report", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // 1) 이미지 업로드
+      let imageUrl = "";
+      if (photoFile) {
+        const formData = new FormData();
+        formData.append("file", photoFile);
+
+        const uploadRes = await api.post("/image/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (!uploadRes.data.success) {
+          throw new Error("이미지 업로드 실패");
+        }
+
+        // 백엔드 명세상 data가 URL 문자열
+        imageUrl = uploadRes.data.data;
+      }
+
+      // 2) 제보 생성(JSON)
+      const response = await api.post("/report", {
+        title,
+        description: content,
+        imageUrl,
+        roadAddress: address,
+        lotAddress: detail,
+        latitude: lat,
+        longitude: lng,
+        sourceType: "USER",
       });
 
-      if (!response.data?.success) {
-        throw new Error(response.data?.message || "제보 등록 실패");
+      if (!response.data.success) {
+        throw new Error(response.data.message || "제보 등록 실패");
       }
 
       // 제보 성공 → MapPage로 이동
