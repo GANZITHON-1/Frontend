@@ -203,14 +203,16 @@ const MapPage = () => {
     let detail = {};
     if (item.sourceType === "USER") {
       detail = (await apiGetMapPageUserData(item.markerId)) || {};
+      setSelectData(detail);
+      setResizeHeight(40);
     } else if (item.sourceType === "PUBLIC") {
       detail = (await apiGetMapPagePublicData(item.markerId)) || {};
+      setSelectData(detail);
+      setResizeHeight(15);
     } else {
       return;
     }
 
-    setSelectData(detail);
-    setResizeHeight((prev) => (prev < 40 ? 40 : prev));
     setShowGpsButtons(false);
   }, []);
 
@@ -460,7 +462,12 @@ const MapPage = () => {
                 </p>
               </div>
 
-              <div className="mapPage-public-image" />
+              <div
+                className="mapPage-public-image"
+                style={{
+                  backgroundImage: `url(${selectData.report.imageUrl || ""})`,
+                }}
+              />
 
               <div className="mapPage-ai">
                 <p className="sub-title-4">AI요약</p>
