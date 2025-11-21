@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
+import gps_move from "../../../assets/map/gps_move.png";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 
@@ -37,10 +38,9 @@ const FILTER_OPTIONS = [
 
 const MapPage = () => {
   const nav = useNavigate();
-  const location = useLocation();
 
   //  검색 결과로 전달되는 값 (좌표)
-  const state = location.state;
+  const state = useLocation().state;
   const searchLat = state?.lat;
   const searchLng = state?.lng;
   const searchKeyword = state?.search;
@@ -116,7 +116,7 @@ const MapPage = () => {
   /**
    * GPS 사용자 마커 업데이트
    */
-  const updateUserMarker = useCallback((lat, lng, heading) => {
+  const updateUserMarker = useCallback((lat, lng, heading, tracking = false) => {
     if (!mapRef.current || !window.kakao?.maps) return;
     if (typeof lat !== "number" || typeof lng !== "number") return;
 
@@ -143,7 +143,7 @@ const MapPage = () => {
     }
 
     markerRef.current.overlay.setPosition(position);
-    markerRef.current.img.src = gps_stop;
+    markerRef.current.img.src = tracking ? gps_move : gps_stop;
     markerRef.current.container.style.transform = hasHeading ? `translate(-50%, -50%) rotate(${heading}deg)` : `translate(-50%, -50%)`;
   }, []);
 
@@ -159,7 +159,7 @@ const MapPage = () => {
         const { latitude, longitude } = coords;
         setUserLocation({ lat: latitude, lng: longitude, heading: null });
         moveMapCenter(latitude, longitude);
-        updateUserMarker(latitude, longitude, null);
+        updateUserMarker(latitude, longitude, null, false);
       },
       () => alert("위치 정보를 가져올 수 없습니다.")
     );
@@ -168,12 +168,6 @@ const MapPage = () => {
   const handleGpsButtonClick = useCallback(() => {
     moveToCurrentLocation();
   }, [moveToCurrentLocation]);
-
-  useEffect(() => {
-    if (location.state) {
-      nav(location.pathname, { replace: true, state: null });
-    }
-  }, [location.pathname, location.state, nav]);
 
   /**
    * 지도와 위치 정보를 초기화한다. location 값이 있으면 해당 위치로 이동한다.
