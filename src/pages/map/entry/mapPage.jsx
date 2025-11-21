@@ -260,7 +260,7 @@ const MapPage = () => {
           window._clusterer = new window.kakao.maps.MarkerClusterer({
             map: mapRef.current,
             averageCenter: true,
-            minLevel: 6,
+            minLevel: 4,
             gridSize: 40,
           });
         }
