@@ -430,7 +430,7 @@ const MapPage = () => {
       </Resizable>
 
       {/* 지도 */}
-      <div id="map" style={{ width: "100vw", height: "90vh" }}></div>
+      <div id="map" style={{ width: "100%", height: "100%" }}></div>
     </section>
   );
 };
