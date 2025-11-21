@@ -6,8 +6,10 @@ import useDistance from "../../../hook/useDistance";
 import { useGeocoder } from "../../../hook/useGeocoder";
 import NavigationBar from "../../../component/NavigationBar/NavigationBar";
 import detailIcon from "../../../assets/icons/detail.svg";
+import styled from "@emotion/styled";
 
 export function MyReportsPage() {
+  const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [userLocation, setUserLocation] = useState({ lat: null, lng: null });
   const distance = useDistance();
@@ -84,7 +86,11 @@ export function MyReportsPage() {
       <div className="container">
         {reports.length > 0 &&
           reports.map((report) => (
-            <div key={report.id} className="reportBox">
+            <div
+              key={report.reportId}
+              className="reportBox"
+              onClick={() => navigate(`/report-edit/${report.reportId}`)}
+            >
               <div>
                 <div className="reportTitle">{report.title}</div>
                 <div className="reportSubText">

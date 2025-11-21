@@ -60,30 +60,16 @@
 
 .custom-input::placeholder {
   color: var(--Gray-300, #9ca3af);
-
-  /* Body/medium02 */
-  font-family: Pretendard;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%; /* 21px */
-}
-
-.custom-input:focus {
-  outline: none;
 }
 
 .custom-input.active {
   border: 1px solid var(--Gray-200, #e5e7eb);
   background: #fff;
   color: var(--Black, #000);
+}
 
-  /* Body/medium02 */
-  font-family: Pretendard;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%; /* 21px */
+.custom-input:focus {
+  outline: none;
 }
 
 .custom-input.error {

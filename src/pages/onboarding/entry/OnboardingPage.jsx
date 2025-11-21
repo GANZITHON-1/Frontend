@@ -106,9 +106,9 @@ export function OnboardingPage() {
                   </div>
                 )}
               </div>
-              <div className="box">
-                <div className="boldText">{slide.title}</div>
-                <div className="subText">{slide.subtitle}</div>
+              <div className="onboarding-box">
+                <div className="onboarding-boldText">{slide.title}</div>
+                <div className="onboarding-subText">{slide.subtitle}</div>
               </div>
             </div>
           </SwiperSlide>

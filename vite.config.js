@@ -8,6 +8,11 @@ export default defineConfig({
     host: true,
     port: 5173,
 
+    // vite dev 서버 캐시 끄기
+    headers: {
+      "Cache-Control": "no-store",
+    },
+
     // proxy 추가
     proxy: {
       "/auth": {
