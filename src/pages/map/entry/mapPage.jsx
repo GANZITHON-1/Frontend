@@ -34,7 +34,7 @@ import detalIcon from "../../../assets/map/marker/detal.svg";
 
 const FILTER_OPTIONS = [
   { key: "user", label: "이웃 제보" },
-  { key: "police", label: "치안 민원" },
+  // { key: "police", label: "치안 민원" },
   { key: "cctv", label: "CCTV" },
   { key: "traffic", label: "교통사고" },
   { key: "bell", label: "비상벨" },
@@ -43,7 +43,7 @@ const FILTER_OPTIONS = [
 const MapPage = () => {
   const nav = useNavigate();
 
-  // 🔥 검색 결과로 전달되는 값 (좌표)
+  //  검색 결과로 전달되는 값 (좌표)
   const state = useLocation().state;
   const searchLat = state?.lat;
   const searchLng = state?.lng;
@@ -56,6 +56,11 @@ const MapPage = () => {
   const [place, setPlace] = useState(searchKeyword || "");
   const [data, setData] = useState([]);
 
+  // const watchIdRef = useRef(null);
+  const fetchTimeoutRef = useRef(null);
+  const [mapLevel, setMapLevel] = useState(3);
+
+  // const [isTracking, setIsTracking] = useState(false);
   const [userLocation, setUserLocation] = useState({
     lat: null,
     lng: null,
@@ -178,6 +183,77 @@ const MapPage = () => {
 
   /**
    * 지도 초기화
+  // /**
+  //  * 위치 추적을 중지한다.
+  //  */
+  // const stopTracking = useCallback(() => {
+  //   if (watchIdRef.current === null) {
+  //     return;
+  //   }
+  //   navigator.geolocation.clearWatch(watchIdRef.current);
+  //   watchIdRef.current = null;
+
+  //   if (userLocation.lat !== null && userLocation.lng !== null) {
+  //     updateUserMarker(userLocation.lat, userLocation.lng, null, false);
+  //   }
+  // }, [updateUserMarker, userLocation.lat, userLocation.lng]);
+
+  // /**
+  //  * 위치 추적을 시작한다. 실시간으로 위치를 업데이트한다.
+  //  */
+  // const startTracking = useCallback(async () => {
+  //   const allowed = await checkGeolocationPermission();
+  //   if (!allowed) {
+  //     alert("위치 권한이 없어 실시간 위치 추적을 사용할 수 없습니다.");
+  //     return false;
+  //   }
+
+  //   watchIdRef.current = navigator.geolocation.watchPosition(
+  //     ({ coords }) => {
+  //       const { latitude, longitude, heading } = coords;
+  //       setUserLocation({ lat: latitude, lng: longitude, heading });
+  //       moveMapCenter(latitude, longitude);
+  //       updateUserMarker(latitude, longitude, heading, true);
+  //     },
+  //     () => {
+  //       alert("위치 정보를 실시간으로 가져올 수 없습니다.");
+  //       stopTracking();
+  //     },
+  //     { enableHighAccuracy: true }
+  //   );
+
+  //   return true;
+  // }, [checkGeolocationPermission, moveMapCenter, stopTracking, updateUserMarker]);
+
+  // /**
+  //  * 위치 추적 토글(켜기/끄기) 기능을 수행한다.
+  //  */
+  // const toggleTracking = useCallback(async () => {
+  //   if (isTracking) {
+  //     stopTracking();
+  //     setIsTracking(false);
+  //     return;
+  //   }
+
+  //   const started = await startTracking();
+  //   if (started) {
+  //     setIsTracking(true);
+  //   }
+  // }, [isTracking, startTracking, stopTracking]);
+
+  const handleGpsButtonClick = useCallback(() => {
+    moveToCurrentLocation();
+  }, [moveToCurrentLocation]);
+
+  /**
+   * 필터 버튼을 토글한다.
+   */
+  const handleFilterToggle = (key) => {
+    setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  /**
+   * 지도와 위치 정보를 초기화한다. location 값이 있으면 해당 위치로 이동한다.
    */
   useEffect(() => {
     if (!window.kakao?.maps) return;
@@ -207,7 +283,7 @@ const MapPage = () => {
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
-    const fetchData = async () => {
+    fetchTimeoutRef.current = window.setTimeout(async () => {
       const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
@@ -288,6 +364,14 @@ const MapPage = () => {
           pingMarker.setMap(mapRef.current);
           window._pingMarker = pingMarker;
         }
+      }
+      fetchTimeoutRef.current = null;
+    }, 5000);
+
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
       }
     };
 
