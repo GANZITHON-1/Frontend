@@ -80,7 +80,7 @@ const MapPage = () => {
   const getApproxMapRadiusKm = useCallback(() => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
-    const levelToRadius = { 3: 2, 4: 4, 5: 8, 6: 16, 7: 32 };
+    const levelToRadius = { 2: 1, 3: 2, 4: 4, 5: 8, 6: 16, 7: 32, 8: 64, 9: 128 };
     return levelToRadius[level] || 2;
   }, []);
 
