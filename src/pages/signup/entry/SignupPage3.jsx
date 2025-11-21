@@ -59,6 +59,10 @@ export function SignupPage3() {
           if (response.data.data.name) {
             localStorage.setItem("user_name", response.data.data.name);
           }
+          // 사용자 이메일 저장(마이페이지 사용)
+          if (response.data.data.name) {
+            localStorage.setItem("user_email", response.data.data.email);
+          }
 
           // 폭죽
           confetti({
