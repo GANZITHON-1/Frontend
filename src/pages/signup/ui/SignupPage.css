@@ -44,7 +44,7 @@
   opacity: 0;
 }
 
-.custom-input {
+.signup-input {
   display: flex;
   height: 45px;
   width: 100%;
@@ -58,17 +58,17 @@
   margin-top: 8px;
 }
 
-.custom-input::placeholder {
+.signup-input::placeholder {
   color: var(--Gray-300, #9ca3af);
 }
 
-.custom-input.active {
+.signup-input.active {
   border: 1px solid var(--Gray-200, #e5e7eb);
   background: #fff;
   color: var(--Black, #000);
 }
 
-.custom-input:focus {
+.signup-input:focus {
   outline: none;
 }
 

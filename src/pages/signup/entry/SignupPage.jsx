@@ -55,7 +55,7 @@ export function SignupPage() {
         <div className="inputBox">
           <div className="inputTitle">이름</div>
           <input
-            className={`custom-input ${
+            className={`signup-input ${
               name && cleanInput(name) !== "" ? "active" : ""
             }`}
             placeholder="홍길동"
@@ -68,7 +68,7 @@ export function SignupPage() {
           <div className="inputBox">
             <div className="inputTitle">이메일</div>
             <input
-              className={`custom-input ${
+              className={`signup-input ${
                 email && cleanInput(email) !== "" ? "active" : ""
               }`}
               placeholder="abcde@gmail.com"
