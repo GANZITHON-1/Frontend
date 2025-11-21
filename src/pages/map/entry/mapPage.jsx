@@ -5,15 +5,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
-import gps_move from "../../../assets/map/gps_move.png";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 
-import {
-  apiGetMapPageDataByFilter,
-  apiGetMapPagePublicData,
-  apiGetMapPageUserData,
-} from "../../../api/map";
+import { apiGetMapPageDataByFilter, apiGetMapPagePublicData, apiGetMapPageUserData } from "../../../api/map";
 
 import CctvIcon from "../../../component/icons/cctvIcon";
 import CarIcon from "../../../component/icons/carIcon";
@@ -42,9 +37,10 @@ const FILTER_OPTIONS = [
 
 const MapPage = () => {
   const nav = useNavigate();
+  const location = useLocation();
 
   //  검색 결과로 전달되는 값 (좌표)
-  const state = useLocation().state;
+  const state = location.state;
   const searchLat = state?.lat;
   const searchLng = state?.lng;
   const searchKeyword = state?.search;
@@ -57,17 +53,13 @@ const MapPage = () => {
   const [data, setData] = useState([]);
 
   // const watchIdRef = useRef(null);
-  const fetchTimeoutRef = useRef(null);
-  const [mapLevel, setMapLevel] = useState(3);
 
-  // const [isTracking, setIsTracking] = useState(false);
   const [userLocation, setUserLocation] = useState({
     lat: null,
     lng: null,
     heading: null,
   });
 
-  const [isTracking, setIsTracking] = useState(false);
   const [showGpsButtons, setShowGpsButtons] = useState(true);
   const [resizeHeight, setResizeHeight] = useState(15.0);
 
@@ -81,10 +73,7 @@ const MapPage = () => {
       return acc;
     }, {})
   );
-  const activeFilterKeys = useMemo(
-    () => Object.keys(filters).filter((key) => filters[key]),
-    [filters]
-  );
+  const activeFilterKeys = useMemo(() => Object.keys(filters).filter((key) => filters[key]), [filters]);
 
   // 지도 반경 계산
   const getApproxMapRadiusKm = () => {
@@ -127,41 +116,36 @@ const MapPage = () => {
   /**
    * GPS 사용자 마커 업데이트
    */
-  const updateUserMarker = useCallback(
-    (lat, lng, heading, tracking = false) => {
-      if (!mapRef.current || !window.kakao?.maps) return;
-      if (typeof lat !== "number" || typeof lng !== "number") return;
+  const updateUserMarker = useCallback((lat, lng, heading) => {
+    if (!mapRef.current || !window.kakao?.maps) return;
+    if (typeof lat !== "number" || typeof lng !== "number") return;
 
-      const position = new window.kakao.maps.LatLng(lat, lng);
-      const hasHeading = typeof heading === "number";
+    const position = new window.kakao.maps.LatLng(lat, lng);
+    const hasHeading = typeof heading === "number";
 
-      if (!markerRef.current) {
-        const container = document.createElement("div");
-        container.className = "mapPage-gpsMarker";
+    if (!markerRef.current) {
+      const container = document.createElement("div");
+      container.className = "mapPage-gpsMarker";
 
-        const img = document.createElement("img");
-        img.alt = "사용자 위치";
-        container.appendChild(img);
+      const img = document.createElement("img");
+      img.alt = "사용자 위치";
+      container.appendChild(img);
 
-        const overlay = new window.kakao.maps.CustomOverlay({
-          position,
-          content: container,
-          yAnchor: 0.5,
-          xAnchor: 0.5,
-        });
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: container,
+        yAnchor: 0.5,
+        xAnchor: 0.5,
+      });
 
-        overlay.setMap(mapRef.current);
-        markerRef.current = { overlay, container, img };
-      }
+      overlay.setMap(mapRef.current);
+      markerRef.current = { overlay, container, img };
+    }
 
-      markerRef.current.overlay.setPosition(position);
-      markerRef.current.img.src = tracking ? gps_move : gps_stop;
-      markerRef.current.container.style.transform = hasHeading
-        ? `translate(-50%, -50%) rotate(${heading}deg)`
-        : `translate(-50%, -50%)`;
-    },
-    []
-  );
+    markerRef.current.overlay.setPosition(position);
+    markerRef.current.img.src = gps_stop;
+    markerRef.current.container.style.transform = hasHeading ? `translate(-50%, -50%) rotate(${heading}deg)` : `translate(-50%, -50%)`;
+  }, []);
 
   /**
    * 현재 위치로 이동
@@ -175,82 +159,21 @@ const MapPage = () => {
         const { latitude, longitude } = coords;
         setUserLocation({ lat: latitude, lng: longitude, heading: null });
         moveMapCenter(latitude, longitude);
-        updateUserMarker(latitude, longitude, null, false);
+        updateUserMarker(latitude, longitude, null);
       },
       () => alert("위치 정보를 가져올 수 없습니다.")
     );
   }, [checkGeolocationPermission, moveMapCenter, updateUserMarker]);
 
-  /**
-   * 지도 초기화
-  // /**
-  //  * 위치 추적을 중지한다.
-  //  */
-  // const stopTracking = useCallback(() => {
-  //   if (watchIdRef.current === null) {
-  //     return;
-  //   }
-  //   navigator.geolocation.clearWatch(watchIdRef.current);
-  //   watchIdRef.current = null;
-
-  //   if (userLocation.lat !== null && userLocation.lng !== null) {
-  //     updateUserMarker(userLocation.lat, userLocation.lng, null, false);
-  //   }
-  // }, [updateUserMarker, userLocation.lat, userLocation.lng]);
-
-  // /**
-  //  * 위치 추적을 시작한다. 실시간으로 위치를 업데이트한다.
-  //  */
-  // const startTracking = useCallback(async () => {
-  //   const allowed = await checkGeolocationPermission();
-  //   if (!allowed) {
-  //     alert("위치 권한이 없어 실시간 위치 추적을 사용할 수 없습니다.");
-  //     return false;
-  //   }
-
-  //   watchIdRef.current = navigator.geolocation.watchPosition(
-  //     ({ coords }) => {
-  //       const { latitude, longitude, heading } = coords;
-  //       setUserLocation({ lat: latitude, lng: longitude, heading });
-  //       moveMapCenter(latitude, longitude);
-  //       updateUserMarker(latitude, longitude, heading, true);
-  //     },
-  //     () => {
-  //       alert("위치 정보를 실시간으로 가져올 수 없습니다.");
-  //       stopTracking();
-  //     },
-  //     { enableHighAccuracy: true }
-  //   );
-
-  //   return true;
-  // }, [checkGeolocationPermission, moveMapCenter, stopTracking, updateUserMarker]);
-
-  // /**
-  //  * 위치 추적 토글(켜기/끄기) 기능을 수행한다.
-  //  */
-  // const toggleTracking = useCallback(async () => {
-  //   if (isTracking) {
-  //     stopTracking();
-  //     setIsTracking(false);
-  //     return;
-  //   }
-
-  //   const started = await startTracking();
-  //   if (started) {
-  //     setIsTracking(true);
-  //   }
-  // }, [isTracking, startTracking, stopTracking]);
-
   const handleGpsButtonClick = useCallback(() => {
     moveToCurrentLocation();
   }, [moveToCurrentLocation]);
 
-  /**
-   * 필터 버튼을 토글한다.
-   */
-  const handleFilterToggle = (key) => {
-    setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  useEffect(() => {
+    if (location.state) {
+      nav(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, nav]);
 
   /**
    * 지도와 위치 정보를 초기화한다. location 값이 있으면 해당 위치로 이동한다.
@@ -283,7 +206,9 @@ const MapPage = () => {
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
-    fetchTimeoutRef.current = window.setTimeout(async () => {
+    let isCancelled = false;
+
+    const fetchData = async () => {
       const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
@@ -291,6 +216,8 @@ const MapPage = () => {
         lng: userLocation.lng,
         radius,
       });
+
+      if (isCancelled) return;
 
       setData(response || []);
 
@@ -327,21 +254,14 @@ const MapPage = () => {
         const markers = (response || [])
           .filter((item) => item.lat && item.lng)
           .map((item) => {
-            const iconSrc =
-              iconMap[item.filterType?.toLowerCase()] || reportIcon;
+            const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
 
             const marker = new window.kakao.maps.Marker({
               position: new window.kakao.maps.LatLng(item.lat, item.lng),
-              image: new window.kakao.maps.MarkerImage(
-                iconSrc,
-                new window.kakao.maps.Size(24, 24),
-                { offset: new window.kakao.maps.Point(12, 24) }
-              ),
+              image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(24, 24), { offset: new window.kakao.maps.Point(12, 24) }),
             });
 
-            window.kakao.maps.event.addListener(marker, "click", () =>
-              onClickListItem(item)
-            );
+            window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
 
             return marker;
           });
@@ -353,11 +273,7 @@ const MapPage = () => {
         if (searchLat && searchLng) {
           const pingMarker = new window.kakao.maps.Marker({
             position: new window.kakao.maps.LatLng(searchLat, searchLng),
-            image: new window.kakao.maps.MarkerImage(
-              pingIcon,
-              new window.kakao.maps.Size(32, 32),
-              { offset: new window.kakao.maps.Point(16, 32) }
-            ),
+            image: new window.kakao.maps.MarkerImage(pingIcon, new window.kakao.maps.Size(32, 32), { offset: new window.kakao.maps.Point(16, 32) }),
             zIndex: 1000,
           });
 
@@ -365,24 +281,14 @@ const MapPage = () => {
           window._pingMarker = pingMarker;
         }
       }
-      fetchTimeoutRef.current = null;
-    }, 5000);
-
-    return () => {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-        fetchTimeoutRef.current = null;
-      }
     };
 
     fetchData();
-  }, [
-    activeFilterKeys,
-    userLocation.lat,
-    userLocation.lng,
-    searchLat,
-    searchLng,
-  ]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng]);
 
   /**
    * 리스트 선택 시 상세보기
@@ -401,11 +307,7 @@ const MapPage = () => {
     <section className="mapPage">
       {/* ===== 검색바 영역 ===== */}
       <div className="mapPage-searchBar">
-        <MapPageSearchBar
-          place={place}
-          setSelectData={setSelectData}
-          selectData={selectData}
-        />
+        <MapPageSearchBar place={place} setSelectData={setSelectData} selectData={selectData} />
         <div className="mapPage-searchSettings">
           <SettingIcon />
         </div>
@@ -428,16 +330,15 @@ const MapPage = () => {
           const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
           setResizeHeight(Number(vh.toFixed(3)));
         }}
-        handleComponent={{ top: <div className="mapPage-bottomSheetBar" /> }}
-      >
+        handleComponent={{ top: <div className="mapPage-bottomSheetBar" /> }}>
         <div className="mapPage-bottomSheetContent">
           {showGpsButtons && (
             <div className="mapPage-mapButtons">
               <button type="button" onClick={() => nav("/report")}>
                 <ReportIcon />
               </button>
-              <button type="button" onClick={() => setIsTracking(!isTracking)}>
-                <GpsIcon active={isTracking} />
+              <button type="button" onClick={handleGpsButtonClick}>
+                <GpsIcon />
               </button>
             </div>
           )}
@@ -449,16 +350,13 @@ const MapPage = () => {
                 {FILTER_OPTIONS.map(({ key, label }) => (
                   <button
                     key={key}
-                    className={`mapPage-filterItem${
-                      filters[key] ? " mapPage-filterItem--active" : ""
-                    }`}
+                    className={`mapPage-filterItem${filters[key] ? " mapPage-filterItem--active" : ""}`}
                     onClick={() =>
                       setFilters((prev) => ({
                         ...prev,
                         [key]: !prev[key],
                       }))
-                    }
-                  >
+                    }>
                     {label}
                   </button>
                 ))}
@@ -466,11 +364,7 @@ const MapPage = () => {
 
               <div className="mapPage-list scroll">
                 {data?.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="mapPage-list-item"
-                    onClick={() => onClickListItem(item)}
-                  >
+                  <div key={idx} className="mapPage-list-item" onClick={() => onClickListItem(item)}>
                     <div className="mapPage-list-item-icon">
                       {item.filterType === "user" && <ReportIcon />}
                       {item.filterType === "police" && <DetalIcon />}
@@ -482,15 +376,7 @@ const MapPage = () => {
                     <div className="mapPage-list-item-content">
                       <p className="sub-title-3">{item.title}</p>
                       <div className="body-2">
-                        <span>
-                          {Math.round(
-                            distance(
-                              { lat: userLocation.lat, lng: userLocation.lng },
-                              { lat: item.lat, lng: item.lng }
-                            )
-                          )}
-                          m
-                        </span>
+                        <span>{Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng }))}m</span>
                         <div className="mapPage-dot" />
                         <span>{item.location || "주소 정보 없음"}</span>
                       </div>
@@ -513,13 +399,7 @@ const MapPage = () => {
               <p className="body-3">{selectData.filterType}</p>
               <p className="body-2">
                 {selectData.location}
-                <span
-                  onClick={() =>
-                    navigator.clipboard.writeText(selectData.location)
-                  }
-                >
-                  복사
-                </span>
+                <span onClick={() => navigator.clipboard.writeText(selectData.location)}>복사</span>
               </p>
             </div>
           )}
@@ -535,15 +415,7 @@ const MapPage = () => {
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
                   {selectData.report.lotAddress}
-                  <span
-                    onClick={() =>
-                      navigator.clipboard.writeText(
-                        selectData.report.lotAddress
-                      )
-                    }
-                  >
-                    복사
-                  </span>
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
