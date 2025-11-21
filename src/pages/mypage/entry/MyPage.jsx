@@ -90,9 +90,9 @@ export function MyPage() {
     }
 
     try {
-      const response = await api.delete("/mypage/delete", {
+      const response = await api.delete("/auth/delete", {
         data: {
-          userld: parseInt(userId), // 명세서대로 int로 변환
+          userId: parseInt(userId), // 명세서대로 int로 변환
           token: token,
         },
       });
