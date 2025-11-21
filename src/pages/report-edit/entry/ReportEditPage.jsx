@@ -73,22 +73,16 @@ export default function ReportEditPage() {
     try {
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("address", address);
-      formData.append("detail", detail);
-      formData.append("content", content);
-      if (photoFile) formData.append("photo", photoFile); // 새 파일이 있을 때만 전송
+      formData.append("description", content); // content -> description
+      if (photoFile) formData.append("image", photoFile);
 
       // axios로 변경
-      const res = await api.put(`/report/${reportId}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await api.put(`/report/${reportId}`, formData);
 
       if (res.status !== 200) throw new Error("수정 실패");
 
       alert("제보가 수정되었습니다.");
-      navigate("/report-list");
+      navigate("/mypage/reports");
     } catch (err) {
       console.error("수정 실패:", err);
       alert("제보 수정 중 오류가 발생했습니다.");
@@ -100,13 +94,18 @@ export default function ReportEditPage() {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      // axios로 변경
-      const res = await api.delete(`/report/${reportId}`);
+      const token = localStorage.getItem("jwt_token");
+
+      const res = await api.delete(`https://salpyeo.store/report/${reportId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (res.status !== 200) throw new Error("삭제 실패");
 
       alert("제보가 삭제되었습니다.");
-      navigate("/report-list");
+      navigate("/mypage/reports");
     } catch (err) {
       console.error("삭제 실패:", err);
       alert("삭제 중 오류가 발생했습니다.");
