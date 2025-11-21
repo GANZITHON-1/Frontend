@@ -96,7 +96,7 @@ export function LoginPage() {
         <div className="inputBox">
           <div className="inputTitle-hidden">공간 유지용</div>
           <input
-            className={`custom-input ${id.trim() !== "" ? "active" : ""} ${
+            className={`signup-input ${id.trim() !== "" ? "active" : ""} ${
               idError ? "error" : ""
             }`}
             placeholder="아이디"
@@ -113,7 +113,7 @@ export function LoginPage() {
           <div className="input-wrapper">
             <input
               type={showPw ? "text" : "password"}
-              className={`custom-input ${pw.trim() !== "" ? "active" : ""} ${
+              className={`signup-input ${pw.trim() !== "" ? "active" : ""} ${
                 pwError ? "error" : ""
               }`}
               placeholder="비밀번호"
