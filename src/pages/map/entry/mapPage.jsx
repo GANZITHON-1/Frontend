@@ -47,6 +47,7 @@ const MapPage = () => {
   // 지도 관련
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   const [place, setPlace] = useState(searchKeyword || "");
   const [data, setData] = useState([]);
@@ -63,6 +64,7 @@ const MapPage = () => {
   const [resizeHeight, setResizeHeight] = useState(15.0);
 
   const [selectData, setSelectData] = useState({});
+  const isDetailOpen = Object.keys(selectData).length > 0;
   const distance = useDistance();
 
   // 필터
@@ -75,12 +77,12 @@ const MapPage = () => {
   const activeFilterKeys = useMemo(() => Object.keys(filters).filter((key) => filters[key]), [filters]);
 
   // 지도 반경 계산
-  const getApproxMapRadiusKm = () => {
+  const getApproxMapRadiusKm = useCallback(() => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
     const levelToRadius = { 3: 2, 4: 4, 5: 8, 6: 16, 7: 32 };
     return levelToRadius[level] || 2;
-  };
+  }, []);
 
   // 권한 체크
   const checkGeolocationPermission = useCallback(async () => {
@@ -191,7 +193,7 @@ const MapPage = () => {
     }
 
     moveToCurrentLocation();
-  }, [searchLat, searchLng, searchKeyword, moveToCurrentLocation]);
+  }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
   /**
    * 지도 마커 + 핑 마커 표시
@@ -200,12 +202,15 @@ const MapPage = () => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
     const fetchData = async () => {
-      // const radius = getApproxMapRadiusKm();
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+
+      const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
         lat: userLocation.lat,
         lng: userLocation.lng,
-        radius: 40,
+        radius: radius,
       });
 
       setData(response || []);
@@ -270,23 +275,40 @@ const MapPage = () => {
           window._pingMarker = pingMarker;
         }
       }
+      isFetchingRef.current = false;
     };
 
     fetchData();
-  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng]);
+  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem]);
 
   /**
    * 리스트 선택 시 상세보기
    */
-  const onClickListItem = (item) => {
+  const onClickListItem = useCallback(async (item) => {
+    if (!item) return;
+
+    let detail = {};
     if (item.sourceType === "USER") {
-      setSelectData(apiGetMapPageUserData(item.markerId));
+      detail = (await apiGetMapPageUserData(item.markerId)) || {};
     } else if (item.sourceType === "PUBLIC") {
-      setSelectData(apiGetMapPagePublicData(item.markerId));
-      setResizeHeight(15.0);
+      detail = (await apiGetMapPagePublicData(item.markerId)) || {};
+    } else {
+      return;
+    }
+
+    setSelectData(detail);
+    setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+    setShowGpsButtons(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDetailOpen) {
+      setShowGpsButtons(false);
+      setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+    } else {
       setShowGpsButtons(true);
     }
-  };
+  }, [isDetailOpen]);
 
   return (
     <section className="mapPage">
@@ -315,7 +337,9 @@ const MapPage = () => {
         onResize={(e, direction, ref) => {
           const px = parseFloat(ref.style.height || "0");
           const vh = (px / window.innerHeight) * 100;
-          setShowGpsButtons(vh <= 7.7);
+          if (!isDetailOpen) {
+            setShowGpsButtons(vh <= 7.7);
+          }
         }}
         onResizeStop={(e, direction, ref) => {
           let px;
