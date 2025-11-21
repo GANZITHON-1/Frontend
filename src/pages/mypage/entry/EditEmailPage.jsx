@@ -64,7 +64,7 @@ export function EditEmailPage() {
         <div className="inputBox">
           <div className="inputTitle">이메일</div>
           <input
-            className="custom-input"
+            className="mypage-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           ></input>

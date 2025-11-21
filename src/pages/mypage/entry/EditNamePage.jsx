@@ -58,7 +58,7 @@ export function EditNamePage() {
         <div className="inputBox">
           <div className="inputTitle">이름</div>
           <input
-            className="custom-input"
+            className="mypage-input"
             value={name}
             onChange={(e) => setName(e.target.value)}
           ></input>

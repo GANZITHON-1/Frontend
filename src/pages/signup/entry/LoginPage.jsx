@@ -66,6 +66,7 @@ export function LoginPage() {
         localStorage.setItem("user_id", userId.toString());
         localStorage.setItem("user_name", name);
         localStorage.setItem("user_email", email);
+        console.log("저장될 이메일 값:", email);
 
         // 로그인 성공 후 지도 페이지로 이동
         navigate("/map");
