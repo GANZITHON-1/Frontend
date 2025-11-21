@@ -27,7 +27,7 @@ import detalIcon from "../../../assets/map/marker/detal.svg";
 
 const FILTER_OPTIONS = [
   { key: "user", label: "이웃 제보" },
-  { key: "police", label: "치안 민원" },
+  // { key: "police", label: "치안 민원" },
   { key: "cctv", label: "CCTV" },
   { key: "traffic", label: "교통사고" },
   { key: "bell", label: "비상벨" },
@@ -55,8 +55,10 @@ const MapPage = () => {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const watchIdRef = useRef(null);
+  const fetchTimeoutRef = useRef(null);
   const [data, setData] = useState([]);
   const [place, setPlace] = useState("");
+  const [mapLevel, setMapLevel] = useState(3);
 
   const [isTracking, setIsTracking] = useState(false);
   const [userLocation, setUserLocation] = useState({
@@ -255,6 +257,16 @@ const MapPage = () => {
     };
 
     mapRef.current = new window.kakao.maps.Map(container, options);
+    setMapLevel(mapRef.current.getLevel());
+
+    const handleZoomChange = () => {
+      if (!mapRef.current) {
+        return;
+      }
+      setMapLevel(mapRef.current.getLevel());
+    };
+
+    window.kakao.maps.event.addListener(mapRef.current, "zoom_changed", handleZoomChange);
     if (location && location.lat && location.lng) {
       setUserLocation({ lat: location.lat, lng: location.lng, heading: null });
       setPlace(location.search || "");
@@ -263,17 +275,27 @@ const MapPage = () => {
     }
 
     moveToCurrentLocation();
-  }, [moveToCurrentLocation]);
+
+    return () => {
+      if (mapRef.current) {
+        window.kakao.maps.event.removeListener(mapRef.current, "zoom_changed", handleZoomChange);
+      }
+    };
+  }, [location, moveMapCenter, moveToCurrentLocation]);
 
   /**
    * 지도에 마커를 생성하고, 데이터를 조회한다. location 값이 있으면 ping 마커를 마지막에 생성한다.
    */
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) {
-      return;
+      return undefined;
     }
 
-    const fetchData = async () => {
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    fetchTimeoutRef.current = window.setTimeout(async () => {
       const radius = getApproxMapRadiusKm();
       // const response = demoData;
       // TEST: 데모 데이터
@@ -348,9 +370,16 @@ const MapPage = () => {
           window._pingMarker = pingMarker;
         }
       }
+      fetchTimeoutRef.current = null;
+    }, 5000);
+
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
+      }
     };
-    fetchData();
-  }, [activeFilterKeys, userLocation.lat, userLocation.lng]);
+  }, [activeFilterKeys, location, userLocation.lat, userLocation.lng, mapLevel]);
 
   /**
    * 리스트 아이템 클릭 시 상세 데이터를 조회한다.

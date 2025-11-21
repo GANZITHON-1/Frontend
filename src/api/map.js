@@ -16,7 +16,6 @@ export const apiGetMapPageDataByFilter = async (data) => {
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
-      alert(res.data.message || "데이터 검색 오류");
       return [];
     }
     return false;
