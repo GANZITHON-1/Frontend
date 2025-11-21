@@ -35,8 +35,8 @@ export default function ReportEditPage() {
 
         // 백엔드 키와 정확히 맞춰야 함
         setTitle(report.title || "");
-        setAddress(report.address || "");
-        setDetail(report.detailAddress || ""); // 백엔드 명세에 따라 key 확인!
+        setAddress(report.roadAddress || "");
+        setDetail(report.lotAddress || ""); // 백엔드 명세에 따라 key 확인!
         setPhoto(report.imageUrl || ""); // key는 imageUrl
         setContent(report.description || ""); // description이 content임
       } catch (err) {
