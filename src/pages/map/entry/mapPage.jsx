@@ -203,8 +203,8 @@ const MapPage = () => {
       // const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
-        lat: userLocation.lat,
-        lng: userLocation.lng,
+        lat: userLocation.lat !== null ? Number(userLocation.lat.toFixed(4)) : null,
+        lng: userLocation.lng !== null ? Number(userLocation.lng.toFixed(4)) : null,
         radius: 40,
       });
 
