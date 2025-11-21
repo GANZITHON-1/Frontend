@@ -55,7 +55,9 @@ export function SignupPage() {
         <div className="inputBox">
           <div className="inputTitle">이름</div>
           <input
-            className={`custom-input ${name.trim() !== "" ? "active" : ""}`}
+            className={`signup-input ${
+              name && cleanInput(name) !== "" ? "active" : ""
+            }`}
             placeholder="홍길동"
             value={name}
             onChange={handleNameChange}
@@ -66,7 +68,9 @@ export function SignupPage() {
           <div className="inputBox">
             <div className="inputTitle">이메일</div>
             <input
-              className={`custom-input ${email.trim() !== "" ? "active" : ""}`}
+              className={`signup-input ${
+                email && cleanInput(email) !== "" ? "active" : ""
+              }`}
               placeholder="abcde@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

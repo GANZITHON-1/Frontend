@@ -53,13 +53,19 @@ export function LoginPage() {
 
       // 응답 데이터에서 success 확인
       if (response.data.success) {
-        const { token, userId } = response.data.data;
+        const { token, userId, name, email } = response.data.data;
 
-        // JWT 토큰 저장
+        // 이전 사용자 정보 제거
+        localStorage.removeItem("jwt_token");
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("user_name");
+        localStorage.removeItem("user_email");
+
+        // 새 사용자 정보 저장
         localStorage.setItem("jwt_token", token);
-
-        // ID 저장(탈퇴 기능에 필요)
         localStorage.setItem("user_id", userId.toString());
+        localStorage.setItem("user_name", name);
+        localStorage.setItem("user_email", email);
 
         // 로그인 성공 후 지도 페이지로 이동
         navigate("/map");
@@ -90,7 +96,7 @@ export function LoginPage() {
         <div className="inputBox">
           <div className="inputTitle-hidden">공간 유지용</div>
           <input
-            className={`custom-input ${id.trim() !== "" ? "active" : ""} ${
+            className={`signup-input ${id.trim() !== "" ? "active" : ""} ${
               idError ? "error" : ""
             }`}
             placeholder="아이디"
@@ -107,7 +113,7 @@ export function LoginPage() {
           <div className="input-wrapper">
             <input
               type={showPw ? "text" : "password"}
-              className={`custom-input ${pw.trim() !== "" ? "active" : ""} ${
+              className={`signup-input ${pw.trim() !== "" ? "active" : ""} ${
                 pwError ? "error" : ""
               }`}
               placeholder="비밀번호"

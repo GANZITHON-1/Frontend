@@ -89,7 +89,7 @@ export function SignupPage2() {
           <div className="inputTitle">비밀번호</div>
           <input
             type={showPw1 ? "text" : "password"}
-            className={`custom-input ${pw1.trim() !== "" ? "active" : ""} ${
+            className={`signup-input ${pw1.trim() !== "" ? "active" : ""} ${
               pw1Error ? "error" : ""
             }`}
             placeholder="영문, 숫자, 특수문자가 모두 들어간 8-16자"
@@ -108,7 +108,7 @@ export function SignupPage2() {
           <div className="input-wrapper">
             <input
               type={showPw2 ? "text" : "password"}
-              className={`custom-input ${pw2.trim() !== "" ? "active" : ""} ${
+              className={`signup-input ${pw2.trim() !== "" ? "active" : ""} ${
                 pw2Error ? "error" : ""
               }`}
               placeholder="한번 더 입력해 주세요."

@@ -44,7 +44,7 @@ export function SignupPage1() {
         <div className="inputBox">
           <div className="inputTitle">아이디</div>
           <input
-            className={`custom-input ${nickname.trim() !== "" ? "active" : ""}`}
+            className={`signup-input ${nickname.trim() !== "" ? "active" : ""}`}
             placeholder="abc123"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
