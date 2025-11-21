@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
-import gps_move from "../../../assets/map/gps_move.png";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 
@@ -116,7 +115,7 @@ const MapPage = () => {
   /**
    * GPS 사용자 마커 업데이트
    */
-  const updateUserMarker = useCallback((lat, lng, heading, tracking = false) => {
+  const updateUserMarker = useCallback((lat, lng, heading) => {
     if (!mapRef.current || !window.kakao?.maps) return;
     if (typeof lat !== "number" || typeof lng !== "number") return;
 
@@ -143,7 +142,7 @@ const MapPage = () => {
     }
 
     markerRef.current.overlay.setPosition(position);
-    markerRef.current.img.src = tracking ? gps_move : gps_stop;
+    markerRef.current.img.src = gps_stop;
     markerRef.current.container.style.transform = hasHeading ? `translate(-50%, -50%) rotate(${heading}deg)` : `translate(-50%, -50%)`;
   }, []);
 
@@ -200,8 +199,6 @@ const MapPage = () => {
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
-    let isCancelled = false;
-
     const fetchData = async () => {
       const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
@@ -210,8 +207,6 @@ const MapPage = () => {
         lng: userLocation.lng,
         radius,
       });
-
-      if (isCancelled) return;
 
       setData(response || []);
 
@@ -278,10 +273,6 @@ const MapPage = () => {
     };
 
     fetchData();
-
-    return () => {
-      isCancelled = true;
-    };
   }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng]);
 
   /**
@@ -311,20 +302,49 @@ const MapPage = () => {
       {/* ===== 하단 시트 ===== */}
       <Resizable
         className="mapPage-bottomSheet"
-        defaultSize={{ width: "100%", height: "15vh" }}
-        size={{ width: "100%", height: `${resizeHeight}vh` }}
+        defaultSize={{
+          width: "100%",
+          height: "15vh",
+        }}
+        size={{
+          width: "100%",
+          height: `${resizeHeight}vh`,
+        }}
         maxHeight="75vh"
         minHeight="15vh"
-        enable={{ top: true }}
         onResize={(e, direction, ref) => {
-          const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
+          const px = parseFloat(ref.style.height || "0");
+          const vh = (px / window.innerHeight) * 100;
           setShowGpsButtons(vh <= 7.7);
         }}
         onResizeStop={(e, direction, ref) => {
-          const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
+          let px;
+          if (ref.style.height.endsWith("vh")) {
+            px = (parseFloat(ref.style.height) / 100) * window.innerHeight;
+          } else {
+            px = parseFloat(ref.style.height || "0");
+          }
+          const vh = (px / window.innerHeight) * 100;
           setResizeHeight(Number(vh.toFixed(3)));
         }}
-        handleComponent={{ top: <div className="mapPage-bottomSheetBar" /> }}>
+        enable={{ top: true, right: false, bottom: false, left: false }}
+        handleStyles={{
+          top: {
+            height: "32px",
+            width: "100%",
+            cursor: "ns-resize",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 1000,
+          },
+        }}
+        handleComponent={{
+          top: <div className="mapPage-bottomSheetBar" />,
+        }}>
         <div className="mapPage-bottomSheetContent">
           {showGpsButtons && (
             <div className="mapPage-mapButtons">
