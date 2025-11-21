@@ -200,12 +200,12 @@ const MapPage = () => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
     const fetchData = async () => {
-      const radius = getApproxMapRadiusKm();
+      // const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
         lat: userLocation.lat,
         lng: userLocation.lng,
-        radius,
+        radius: 40,
       });
 
       setData(response || []);
