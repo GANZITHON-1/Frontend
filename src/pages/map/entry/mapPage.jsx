@@ -196,6 +196,26 @@ const MapPage = () => {
   }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
   /**
+   * 리스트 선택 시 상세보기
+   */
+  const onClickListItem = useCallback(async (item) => {
+    if (!item) return;
+
+    let detail = {};
+    if (item.sourceType === "USER") {
+      detail = (await apiGetMapPageUserData(item.markerId)) || {};
+    } else if (item.sourceType === "PUBLIC") {
+      detail = (await apiGetMapPagePublicData(item.markerId)) || {};
+    } else {
+      return;
+    }
+
+    setSelectData(detail);
+    setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+    setShowGpsButtons(false);
+  }, []);
+
+  /**
    * 지도 마커 + 핑 마커 표시
    */
   useEffect(() => {
@@ -280,26 +300,6 @@ const MapPage = () => {
 
     fetchData();
   }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem]);
-
-  /**
-   * 리스트 선택 시 상세보기
-   */
-  const onClickListItem = useCallback(async (item) => {
-    if (!item) return;
-
-    let detail = {};
-    if (item.sourceType === "USER") {
-      detail = (await apiGetMapPageUserData(item.markerId)) || {};
-    } else if (item.sourceType === "PUBLIC") {
-      detail = (await apiGetMapPagePublicData(item.markerId)) || {};
-    } else {
-      return;
-    }
-
-    setSelectData(detail);
-    setResizeHeight((prev) => (prev < 40 ? 40 : prev));
-    setShowGpsButtons(false);
-  }, []);
 
   useEffect(() => {
     if (isDetailOpen) {
