@@ -72,7 +72,7 @@
   outline: none;
 }
 
-.custom-input.error {
+.signup-input.error {
   border: 1px solid var(--Red-300, #ef4444);
 }
 
