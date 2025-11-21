@@ -25,7 +25,7 @@
 }
 
 /* 수정 버튼 (항상 파란색) */
-.submit-btn {
+.edit-page .submit-btn {
   flex: 2;
   background-color: #007aff;
   color: white;

@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
-import gps_move from "../../../assets/map/gps_move.png";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 
@@ -48,6 +47,7 @@ const MapPage = () => {
   // 지도 관련
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   const [place, setPlace] = useState(searchKeyword || "");
   const [data, setData] = useState([]);
@@ -64,6 +64,7 @@ const MapPage = () => {
   const [resizeHeight, setResizeHeight] = useState(15.0);
 
   const [selectData, setSelectData] = useState({});
+  const isDetailOpen = Object.keys(selectData).length > 0;
   const distance = useDistance();
 
   // 필터
@@ -76,12 +77,12 @@ const MapPage = () => {
   const activeFilterKeys = useMemo(() => Object.keys(filters).filter((key) => filters[key]), [filters]);
 
   // 지도 반경 계산
-  const getApproxMapRadiusKm = () => {
+  const getApproxMapRadiusKm = useCallback(() => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
     const levelToRadius = { 3: 2, 4: 4, 5: 8, 6: 16, 7: 32 };
     return levelToRadius[level] || 2;
-  };
+  }, []);
 
   // 권한 체크
   const checkGeolocationPermission = useCallback(async () => {
@@ -116,7 +117,7 @@ const MapPage = () => {
   /**
    * GPS 사용자 마커 업데이트
    */
-  const updateUserMarker = useCallback((lat, lng, heading, tracking = false) => {
+  const updateUserMarker = useCallback((lat, lng, heading) => {
     if (!mapRef.current || !window.kakao?.maps) return;
     if (typeof lat !== "number" || typeof lng !== "number") return;
 
@@ -143,7 +144,7 @@ const MapPage = () => {
     }
 
     markerRef.current.overlay.setPosition(position);
-    markerRef.current.img.src = tracking ? gps_move : gps_stop;
+    markerRef.current.img.src = gps_stop;
     markerRef.current.container.style.transform = hasHeading ? `translate(-50%, -50%) rotate(${heading}deg)` : `translate(-50%, -50%)`;
   }, []);
 
@@ -192,7 +193,7 @@ const MapPage = () => {
     }
 
     moveToCurrentLocation();
-  }, [searchLat, searchLng, searchKeyword, moveToCurrentLocation]);
+  }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
   /**
    * 지도 마커 + 핑 마커 표시
@@ -200,18 +201,17 @@ const MapPage = () => {
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
-    let isCancelled = false;
-
     const fetchData = async () => {
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+
       const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
         filters: activeFilterKeys,
         lat: userLocation.lat,
         lng: userLocation.lng,
-        radius,
+        radius: radius,
       });
-
-      if (isCancelled) return;
 
       setData(response || []);
 
@@ -275,27 +275,40 @@ const MapPage = () => {
           window._pingMarker = pingMarker;
         }
       }
+      isFetchingRef.current = false;
     };
 
     fetchData();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng]);
+  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem]);
 
   /**
    * 리스트 선택 시 상세보기
    */
-  const onClickListItem = (item) => {
+  const onClickListItem = useCallback(async (item) => {
+    if (!item) return;
+
+    let detail = {};
     if (item.sourceType === "USER") {
-      setSelectData(apiGetMapPageUserData(item.markerId));
+      detail = (await apiGetMapPageUserData(item.markerId)) || {};
     } else if (item.sourceType === "PUBLIC") {
-      setSelectData(apiGetMapPagePublicData(item.markerId));
-      setResizeHeight(15.0);
+      detail = (await apiGetMapPagePublicData(item.markerId)) || {};
+    } else {
+      return;
+    }
+
+    setSelectData(detail);
+    setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+    setShowGpsButtons(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDetailOpen) {
+      setShowGpsButtons(false);
+      setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+    } else {
       setShowGpsButtons(true);
     }
-  };
+  }, [isDetailOpen]);
 
   return (
     <section className="mapPage">
@@ -311,20 +324,51 @@ const MapPage = () => {
       {/* ===== 하단 시트 ===== */}
       <Resizable
         className="mapPage-bottomSheet"
-        defaultSize={{ width: "100%", height: "15vh" }}
-        size={{ width: "100%", height: `${resizeHeight}vh` }}
+        defaultSize={{
+          width: "100%",
+          height: "15vh",
+        }}
+        size={{
+          width: "100%",
+          height: `${resizeHeight}vh`,
+        }}
         maxHeight="75vh"
         minHeight="15vh"
-        enable={{ top: true }}
         onResize={(e, direction, ref) => {
-          const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
-          setShowGpsButtons(vh <= 7.7);
+          const px = parseFloat(ref.style.height || "0");
+          const vh = (px / window.innerHeight) * 100;
+          if (!isDetailOpen) {
+            setShowGpsButtons(vh <= 7.7);
+          }
         }}
         onResizeStop={(e, direction, ref) => {
-          const vh = (parseFloat(ref.style.height) / window.innerHeight) * 100;
+          let px;
+          if (ref.style.height.endsWith("vh")) {
+            px = (parseFloat(ref.style.height) / 100) * window.innerHeight;
+          } else {
+            px = parseFloat(ref.style.height || "0");
+          }
+          const vh = (px / window.innerHeight) * 100;
           setResizeHeight(Number(vh.toFixed(3)));
         }}
-        handleComponent={{ top: <div className="mapPage-bottomSheetBar" /> }}>
+        enable={{ top: true, right: false, bottom: false, left: false }}
+        handleStyles={{
+          top: {
+            height: "32px",
+            width: "100%",
+            cursor: "ns-resize",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 1000,
+          },
+        }}
+        handleComponent={{
+          top: <div className="mapPage-bottomSheetBar" />,
+        }}>
         <div className="mapPage-bottomSheetContent">
           {showGpsButtons && (
             <div className="mapPage-mapButtons">

@@ -12,7 +12,6 @@ export const apiGetMapPageDataByFilter = async (data) => {
   try {
     const res = await api.get("/map/markers", {
       params: data,
-      timeout: 5000,
     });
     if (res.data.success === true) {
       return res.data.data;
