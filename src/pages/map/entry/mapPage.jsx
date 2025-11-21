@@ -47,7 +47,6 @@ const MapPage = () => {
   // 지도 관련
   const mapRef = useRef(null);
   const markerRef = useRef(null);
-  const isFetchingRef = useRef(false);
 
   const [place, setPlace] = useState(searchKeyword || "");
   const [data, setData] = useState([]);
@@ -81,7 +80,7 @@ const MapPage = () => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
     const levelToRadius = { 2: 1, 3: 2, 4: 4, 5: 8, 6: 16, 7: 32, 8: 64, 9: 128 };
-    return levelToRadius[level] || 2;
+    return levelToRadius[level] || 128;
   }, []);
 
   // 권한 체크
@@ -221,9 +220,14 @@ const MapPage = () => {
   useEffect(() => {
     if (userLocation.lat === null || userLocation.lng === null) return;
 
+    let isFetching = false;
+
     const fetchData = async () => {
-      if (isFetchingRef.current) return alert("데이터를 불러오는 중입니다.\n잠시만 기다려주세요.");
-      isFetchingRef.current = true;
+      if (isFetching) {
+        alert("데이터를 불러오는 중입니다.\n잠시만 기다려주세요.");
+        return;
+      }
+      isFetching = true;
 
       const radius = getApproxMapRadiusKm();
       const response = await apiGetMapPageDataByFilter({
@@ -295,7 +299,7 @@ const MapPage = () => {
           window._pingMarker = pingMarker;
         }
       }
-      isFetchingRef.current = false;
+      isFetching = false;
     };
 
     fetchData();
@@ -432,7 +436,6 @@ const MapPage = () => {
             <div className="mapPage-public-detail">
               <div>
                 <p className="sub-title-2">{selectData.title}</p>
-                <MapSeverity severity={selectData.severity} />
               </div>
               <p className="body-3">{selectData.filterType}</p>
               <p className="body-2">
