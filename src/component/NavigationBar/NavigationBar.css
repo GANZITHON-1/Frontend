@@ -1,6 +1,6 @@
 .navibar {
   display: flex;
-  width: 375px;
+  /* width: 375px; */
   padding: 10px;
   align-items: center;
   /* gap: 119px; */

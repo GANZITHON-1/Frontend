@@ -26,8 +26,7 @@ export default function ReportPage() {
   // /report-search에서 선택된 주소값 받아오기
   useEffect(() => {
     if (location.state?.selectedAddress) {
-      const { roadAddress, lotAddress, lat, lng } =
-        location.state.selectedAddress;
+      const { roadAddress, lotAddress, lat, lng } = location.state.selectedAddress;
 
       setAddress(roadAddress || lotAddress || "");
       setLat(lat);
@@ -50,12 +49,7 @@ export default function ReportPage() {
 
   // 입력 감지 → 버튼 활성화
   useEffect(() => {
-    const filled =
-      title.trim() &&
-      address.trim() &&
-      detail.trim() &&
-      content.trim().length >= 30 &&
-      photo;
+    const filled = title.trim() && address.trim() && detail.trim() && content.trim().length >= 30 && photo;
     setIsActive(!!filled);
   }, [title, address, detail, content, photo]);
 
@@ -68,8 +62,7 @@ export default function ReportPage() {
 
     const newErrors = {};
     if (!title.trim()) newErrors.title = "제목을 입력해 주세요.";
-    if (!address.trim() || !detail.trim())
-      newErrors.address = "위치를 선택해 주세요.";
+    if (!address.trim() || !detail.trim()) newErrors.address = "위치를 선택해 주세요.";
     if (!photo) newErrors.photo = "사진을 업로드 해주세요.";
     if (content.trim().length < 30) newErrors.content = "설명을 입력해 주세요.";
 
@@ -138,7 +131,7 @@ export default function ReportPage() {
     <div>
       <NavigationBar title="제보하기" />
 
-      <div className="report-container">
+      <div className="report-container report-page">
         {/* 제목 */}
         <div className="form-section">
           <label className="form-label">제목</label>
@@ -193,10 +186,7 @@ export default function ReportPage() {
         {/* 사진 업로드 */}
         <div className="form-section">
           <label className="form-label">사진</label>
-          <label
-            htmlFor="photo-upload"
-            className={`upload-box ${errors.photo ? "error" : ""}`}
-          >
+          <label htmlFor="photo-upload" className={`upload-box ${errors.photo ? "error" : ""}`}>
             {photo ? (
               <img src={photo} alt="uploaded" className="upload-preview" />
             ) : (
@@ -212,13 +202,7 @@ export default function ReportPage() {
               </div>
             )}
           </label>
-          <input
-            id="photo-upload"
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            className="hidden-input"
-          />
+          <input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden-input" />
           {errors.photo && (
             <div className="error-msg">
               <img src={warningIcon} alt="warning" className="warning-icon" />
@@ -244,10 +228,7 @@ export default function ReportPage() {
         </div>
 
         {/* 버튼 */}
-        <button
-          className={`submit-btn ${isActive ? "active" : ""}`}
-          onClick={handleSubmit}
-        >
+        <button className={`submit-btn ${isActive ? "active" : ""}`} onClick={handleSubmit}>
           제보하기
         </button>
       </div>

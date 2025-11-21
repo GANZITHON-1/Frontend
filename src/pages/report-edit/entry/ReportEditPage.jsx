@@ -63,10 +63,8 @@ export default function ReportEditPage() {
 
     const newErrors = {};
     if (!title.trim()) newErrors.title = "제목을 입력해 주세요.";
-    if (!address.trim() || !detail.trim())
-      newErrors.address = "위치를 입력해 주세요.";
-    if (!content.trim() || content.trim().length < 30)
-      newErrors.content = "설명을 최소 30자 이상 입력해 주세요.";
+    if (!address.trim() || !detail.trim()) newErrors.address = "위치를 입력해 주세요.";
+    if (!content.trim() || content.trim().length < 30) newErrors.content = "설명을 최소 30자 이상 입력해 주세요.";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
@@ -116,16 +114,11 @@ export default function ReportEditPage() {
     <div>
       <NavigationBar title="제보 수정" />
 
-      <div className="report-container">
+      <div className="report-container edit-page">
         {/* 제목 */}
         <div className="form-section">
           <label className="form-label">제목</label>
-          <input
-            type="text"
-            className={`input-box ${errors.title ? "error" : ""}`}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <input type="text" className={`input-box ${errors.title ? "error" : ""}`} value={title} onChange={(e) => setTitle(e.target.value)} />
           {errors.title && (
             <div className="error-msg">
               <img src={warningIcon} alt="warning" className="warning-icon" />
@@ -179,13 +172,7 @@ export default function ReportEditPage() {
               </div>
             )}
           </label>
-          <input
-            id="photo-upload"
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            className="hidden-input"
-          />
+          <input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden-input" />
           {errors.photo && (
             <div className="error-msg">
               <img src={warningIcon} alt="warning" className="warning-icon" />
