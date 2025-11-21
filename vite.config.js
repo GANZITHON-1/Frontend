@@ -7,5 +7,29 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+
+    // vite dev 서버 캐시 끄기
+    headers: {
+      "Cache-Control": "no-store",
+    },
+
+    // proxy 추가
+    proxy: {
+      "/auth": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/mypage": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/report": {
+        target: "https://salpyeo.store",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });

@@ -32,7 +32,7 @@ function App() {
           {/* #2 제보 페이지 (엄태성 */}
           <Route path="/report" element={<ReportPage />} />
           <Route path="/report-search" element={<ReportSearchPage />} />
-          <Route path="/report-edit" element={<ReportEditPage />} />
+          <Route path="/report-edit/:reportId" element={<ReportEditPage />} />
           <Route path="/report-map" element={<ReportMapPage />} />
 
           {/* #3 로그인/회원가입, 마이페이지 (송이림) */}

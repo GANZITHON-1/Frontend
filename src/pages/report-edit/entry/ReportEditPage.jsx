@@ -4,6 +4,7 @@ import NavigationBar from "../../../component/NavigationBar/NavigationBar";
 import "../ui/ReportEditPage.css";
 import uploadIcon from "../../../assets/icons/upload.svg";
 import warningIcon from "../../../assets/icons/warning.svg";
+import { api } from "../../../api/index"; // 연동 위해 추가했습니다
 
 export default function ReportEditPage() {
   const { reportId } = useParams(); // URL 파라미터로 reportId 받음
@@ -17,24 +18,33 @@ export default function ReportEditPage() {
   const [content, setContent] = useState("");
   const [errors, setErrors] = useState({});
 
-  // 기존 데이터 불러오기
+  // 기존 데이터 불러오기 (axios 스타일로 수정했습니다!)
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const res = await fetch(`/report/${reportId}`);
-        if (!res.ok) throw new Error("서버 응답 오류");
-        const data = await res.json();
+        const res = await api.get(`/report/${reportId}`);
 
-        setTitle(data.title || "");
-        setAddress(data.address || "");
-        setDetail(data.detail || "");
-        setPhoto(data.photoUrl || ""); // 기존 이미지 URL (백엔드가 제공하는 key)
-        setContent(data.content || "");
+        // 테스트 용으로 넣었습니다
+        console.log("상세조회 응답:", res);
+        console.log("상세조회 응답 data:", res.data);
+        console.log("상세조회 응답 data.data:", res.data.data);
+
+        if (res.status !== 200) throw new Error("서버 응답 오류");
+
+        const report = res.data.data.report; // ⬅ 요거 중요!
+
+        // 백엔드 키와 정확히 맞춰야 함
+        setTitle(report.title || "");
+        setAddress(report.roadAddress || "");
+        setDetail(report.lotAddress || ""); // 백엔드 명세에 따라 key 확인!
+        setPhoto(report.imageUrl || ""); // key는 imageUrl
+        setContent(report.description || ""); // description이 content임
       } catch (err) {
         console.error("제보 불러오기 실패:", err);
         alert("제보 데이터를 불러올 수 없습니다.");
       }
     };
+
     fetchReport();
   }, [reportId]);
 
@@ -68,12 +78,15 @@ export default function ReportEditPage() {
       formData.append("content", content);
       if (photoFile) formData.append("photo", photoFile); // 새 파일이 있을 때만 전송
 
-      const res = await fetch(`/report/${reportId}`, {
-        method: "PUT",
-        body: formData,
+      // axios로 변경
+      const res = await api.put(`/report/${reportId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      if (!res.ok) throw new Error("수정 실패");
+      if (res.status !== 200) throw new Error("수정 실패");
+
       alert("제보가 수정되었습니다.");
       navigate("/report-list");
     } catch (err) {
@@ -87,8 +100,11 @@ export default function ReportEditPage() {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      const res = await fetch(`/report/${reportId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("삭제 실패");
+      // axios로 변경
+      const res = await api.delete(`/report/${reportId}`);
+
+      if (res.status !== 200) throw new Error("삭제 실패");
+
       alert("제보가 삭제되었습니다.");
       navigate("/report-list");
     } catch (err) {
