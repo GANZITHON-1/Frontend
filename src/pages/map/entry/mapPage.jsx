@@ -54,13 +54,13 @@ const MapPage = () => {
   const nav = useNavigate();
   const mapRef = useRef(null);
   const markerRef = useRef(null);
-  const watchIdRef = useRef(null);
+  // const watchIdRef = useRef(null);
   const fetchTimeoutRef = useRef(null);
   const [data, setData] = useState([]);
   const [place, setPlace] = useState("");
   const [mapLevel, setMapLevel] = useState(3);
 
-  const [isTracking, setIsTracking] = useState(false);
+  // const [isTracking, setIsTracking] = useState(false);
   const [userLocation, setUserLocation] = useState({
     lat: null,
     lng: null,
@@ -178,63 +178,67 @@ const MapPage = () => {
     );
   }, [checkGeolocationPermission, moveMapCenter, updateUserMarker]);
 
-  /**
-   * 위치 추적을 중지한다.
-   */
-  const stopTracking = useCallback(() => {
-    if (watchIdRef.current === null) {
-      return;
-    }
-    navigator.geolocation.clearWatch(watchIdRef.current);
-    watchIdRef.current = null;
+  // /**
+  //  * 위치 추적을 중지한다.
+  //  */
+  // const stopTracking = useCallback(() => {
+  //   if (watchIdRef.current === null) {
+  //     return;
+  //   }
+  //   navigator.geolocation.clearWatch(watchIdRef.current);
+  //   watchIdRef.current = null;
 
-    if (userLocation.lat !== null && userLocation.lng !== null) {
-      updateUserMarker(userLocation.lat, userLocation.lng, null, false);
-    }
-  }, [updateUserMarker, userLocation.lat, userLocation.lng]);
+  //   if (userLocation.lat !== null && userLocation.lng !== null) {
+  //     updateUserMarker(userLocation.lat, userLocation.lng, null, false);
+  //   }
+  // }, [updateUserMarker, userLocation.lat, userLocation.lng]);
 
-  /**
-   * 위치 추적을 시작한다. 실시간으로 위치를 업데이트한다.
-   */
-  const startTracking = useCallback(async () => {
-    const allowed = await checkGeolocationPermission();
-    if (!allowed) {
-      alert("위치 권한이 없어 실시간 위치 추적을 사용할 수 없습니다.");
-      return false;
-    }
+  // /**
+  //  * 위치 추적을 시작한다. 실시간으로 위치를 업데이트한다.
+  //  */
+  // const startTracking = useCallback(async () => {
+  //   const allowed = await checkGeolocationPermission();
+  //   if (!allowed) {
+  //     alert("위치 권한이 없어 실시간 위치 추적을 사용할 수 없습니다.");
+  //     return false;
+  //   }
 
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      ({ coords }) => {
-        const { latitude, longitude, heading } = coords;
-        setUserLocation({ lat: latitude, lng: longitude, heading });
-        moveMapCenter(latitude, longitude);
-        updateUserMarker(latitude, longitude, heading, true);
-      },
-      () => {
-        alert("위치 정보를 실시간으로 가져올 수 없습니다.");
-        stopTracking();
-      },
-      { enableHighAccuracy: true }
-    );
+  //   watchIdRef.current = navigator.geolocation.watchPosition(
+  //     ({ coords }) => {
+  //       const { latitude, longitude, heading } = coords;
+  //       setUserLocation({ lat: latitude, lng: longitude, heading });
+  //       moveMapCenter(latitude, longitude);
+  //       updateUserMarker(latitude, longitude, heading, true);
+  //     },
+  //     () => {
+  //       alert("위치 정보를 실시간으로 가져올 수 없습니다.");
+  //       stopTracking();
+  //     },
+  //     { enableHighAccuracy: true }
+  //   );
 
-    return true;
-  }, [checkGeolocationPermission, moveMapCenter, stopTracking, updateUserMarker]);
+  //   return true;
+  // }, [checkGeolocationPermission, moveMapCenter, stopTracking, updateUserMarker]);
 
-  /**
-   * 위치 추적 토글(켜기/끄기) 기능을 수행한다.
-   */
-  const toggleTracking = useCallback(async () => {
-    if (isTracking) {
-      stopTracking();
-      setIsTracking(false);
-      return;
-    }
+  // /**
+  //  * 위치 추적 토글(켜기/끄기) 기능을 수행한다.
+  //  */
+  // const toggleTracking = useCallback(async () => {
+  //   if (isTracking) {
+  //     stopTracking();
+  //     setIsTracking(false);
+  //     return;
+  //   }
 
-    const started = await startTracking();
-    if (started) {
-      setIsTracking(true);
-    }
-  }, [isTracking, startTracking, stopTracking]);
+  //   const started = await startTracking();
+  //   if (started) {
+  //     setIsTracking(true);
+  //   }
+  // }, [isTracking, startTracking, stopTracking]);
+
+  const handleGpsButtonClick = useCallback(() => {
+    moveToCurrentLocation();
+  }, [moveToCurrentLocation]);
 
   /**
    * 필터 버튼을 토글한다.
@@ -470,8 +474,8 @@ const MapPage = () => {
                 }}>
                 <ReportIcon />
               </button>
-              <button type="button" onClick={toggleTracking}>
-                <GpsIcon active={isTracking} />
+              <button type="button" onClick={handleGpsButtonClick}>
+                <GpsIcon />
               </button>
             </div>
           )}
