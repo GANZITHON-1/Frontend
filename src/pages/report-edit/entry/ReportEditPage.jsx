@@ -94,13 +94,8 @@ export default function ReportEditPage() {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      const token = localStorage.getItem("jwt_token");
-
-      const res = await api.delete(`https://salpyeo.store/report/${reportId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // 수정 코드와 동일하게 api 인스턴스 사용
+      const res = await api.delete(`/report/${reportId}`);
 
       if (res.status !== 200) throw new Error("삭제 실패");
 
