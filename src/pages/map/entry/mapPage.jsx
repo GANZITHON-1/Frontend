@@ -352,7 +352,7 @@ const MapPage = () => {
 
               const marker = new window.kakao.maps.Marker({
                 position: new window.kakao.maps.LatLng(item.lat, item.lng),
-                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(22, 22), { offset: new window.kakao.maps.Point(12, 24) }),
+                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(24, 24), { offset: new window.kakao.maps.Point(12, 24) }),
               });
 
               window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
