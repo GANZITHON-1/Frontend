@@ -410,7 +410,7 @@ const MapPage = () => {
           const px = parseFloat(ref.style.height || "0");
           const vh = (px / window.innerHeight) * 100;
           if (!isDetailOpen) {
-            setShowGpsButtons(vh <= 7.7);
+            setShowGpsButtons(vh <= 7.0);
           }
         }}
         onResizeStop={(e, direction, ref) => {

@@ -16,7 +16,12 @@ const RefreshIcon = () => {
         color: "var(--gray-400)",
         backgroundColor: "var(--white)",
       }}>
-      <div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         <FontAwesomeIcon icon={faArrowsRotate} />
       </div>
     </div>
