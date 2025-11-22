@@ -1,5 +1,4 @@
 import searchIcon from "../../assets/icons/search.svg";
-import micIcon from "../../assets/icons/mic.svg";
 import "./MapSearchBar.css";
 import backmark from "../../assets/icons/back.svg";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +43,6 @@ export default function MapPageSearchBar({
           disabled
           readOnly
         />
-        <img src={micIcon} className="mapPage-mic-icon" />
       </div>
     </div>
   );
