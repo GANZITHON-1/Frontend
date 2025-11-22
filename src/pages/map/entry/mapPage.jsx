@@ -64,7 +64,10 @@ const MapPage = () => {
     heading: null,
   });
   // 지도 중심 좌표 (리프레시용)
-  const [centerLocation, setCenterLocation] = useState({ lat: null, lng: null });
+  const [centerLocation, setCenterLocation] = useState({
+    lat: null,
+    lng: null,
+  });
 
   const [showGpsButtons, setShowGpsButtons] = useState(true);
   const [resizeHeight, setResizeHeight] = useState(15.0);
@@ -86,7 +89,16 @@ const MapPage = () => {
   const getApproxMapRadiusKm = useCallback(() => {
     if (!mapRef.current) return 2;
     const level = mapRef.current.getLevel();
-    const levelToRadius = { 2: 1, 3: 2, 4: 4, 5: 8, 6: 16, 7: 32, 8: 64, 9: 128 };
+    const levelToRadius = {
+      2: 1,
+      3: 2,
+      4: 4,
+      5: 8,
+      6: 16,
+      7: 32,
+      8: 64,
+      9: 128,
+    };
     return levelToRadius[level] || 128;
   }, []);
 
@@ -167,6 +179,7 @@ const MapPage = () => {
         // 단순 이동만 수행
         moveMapCenter(latitude, longitude);
         updateUserMarker(latitude, longitude, null, false);
+        setCenterLocation({ lat: latitude, lng: longitude });
         setUserLocation((prev) => ({
           ...prev,
           lat: latitude,
@@ -183,6 +196,7 @@ const MapPage = () => {
     if (userLocation.lat !== null && userLocation.lng !== null) {
       moveMapCenter(userLocation.lat, userLocation.lng);
       updateUserMarker(userLocation.lat, userLocation.lng, userLocation.heading);
+      setCenterLocation({ lat: userLocation.lat, lng: userLocation.lng });
     } else {
       moveToCurrentLocation(); // 위치 정보가 없으면 새로 가져옴
     }
@@ -211,10 +225,18 @@ const MapPage = () => {
     mapRef.current = new window.kakao.maps.Map(container, options);
 
     // 검색해서 들어온 위치가 있다면 그 위치로 이동
+    // if (searchLat && searchLng) {
+    //   setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
+    //   setPlace(searchKeyword || "");
+    //   moveMapCenter(searchLat, searchLng);
+    //   return;
+    // }
+
     if (searchLat && searchLng) {
-      setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
-      setPlace(searchKeyword || "");
+      // userLocation 건들지 않고 검색 좌표만 중심 좌표로 기록
+      setCenterLocation({ lat: searchLat, lng: searchLng });
       moveMapCenter(searchLat, searchLng);
+      setPlace(searchKeyword || "");
       return;
     }
 
@@ -548,8 +570,9 @@ const MapPage = () => {
                 </div>
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
+                  {selectData.report.roadAddress}
                   {selectData.report.lotAddress}
-                  <span onClick={() => navigator.clipboard.writeText(selectData.report.lotAddress)}>복사</span>
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
