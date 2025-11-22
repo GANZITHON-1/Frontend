@@ -8,11 +8,7 @@ import GpsIcon from "../../../component/icons/gpsIcon";
 import gps_stop from "../../../assets/map/gps_stop.png";
 import SettingIcon from "../../../component/icons/setting";
 
-import {
-  apiGetMapPageDataByFilter,
-  apiGetMapPagePublicData,
-  apiGetMapPageUserData,
-} from "../../../api/map";
+import { apiGetMapPageDataByFilter, apiGetMapPagePublicData, apiGetMapPageUserData } from "../../../api/map";
 
 import CctvIcon from "../../../component/icons/cctvIcon";
 import CarIcon from "../../../component/icons/carIcon";
@@ -87,10 +83,7 @@ const MapPage = () => {
       return acc;
     }, {})
   );
-  const activeFilterKeys = useMemo(
-    () => Object.keys(filters).filter((key) => filters[key]),
-    [filters]
-  );
+  const activeFilterKeys = useMemo(() => Object.keys(filters).filter((key) => filters[key]), [filters]);
 
   // 지도 반경 계산
   const getApproxMapRadiusKm = useCallback(() => {
@@ -170,9 +163,7 @@ const MapPage = () => {
 
     markerRef.current.overlay.setPosition(position);
     markerRef.current.img.src = gps_stop;
-    markerRef.current.container.style.transform = hasHeading
-      ? `translate(-50%, -50%) rotate(${heading}deg)`
-      : `translate(-50%, -50%)`;
+    markerRef.current.container.style.transform = hasHeading ? `translate(-50%, -50%) rotate(${heading}deg)` : `translate(-50%, -50%)`;
   }, []);
 
   /**
@@ -203,11 +194,7 @@ const MapPage = () => {
   const handleGpsButtonClick = useCallback(() => {
     if (userLocation.lat !== null && userLocation.lng !== null) {
       moveMapCenter(userLocation.lat, userLocation.lng);
-      updateUserMarker(
-        userLocation.lat,
-        userLocation.lng,
-        userLocation.heading
-      );
+      updateUserMarker(userLocation.lat, userLocation.lng, userLocation.heading);
     } else {
       moveToCurrentLocation(); // 위치 정보가 없으면 새로 가져옴
     }
@@ -244,20 +231,15 @@ const MapPage = () => {
     // }
 
     if (searchLat && searchLng) {
-      // userLocation 건들지 않기!!
+      // userLocation 건들지 않고 검색 좌표만 중심 좌표로 기록
+      setCenterLocation({ lat: searchLat, lng: searchLng });
       moveMapCenter(searchLat, searchLng);
       setPlace(searchKeyword || "");
       return;
     }
 
     moveToCurrentLocation();
-  }, [
-    searchLat,
-    searchLng,
-    searchKeyword,
-    moveMapCenter,
-    moveToCurrentLocation,
-  ]);
+  }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
   /**
    * 리스트 선택 시 상세보기
@@ -289,10 +271,8 @@ const MapPage = () => {
    */
   useEffect(() => {
     // 조회 기준: centerLocation이 있으면 그 좌표, 없으면 userLocation
-    const targetLat =
-      centerLocation.lat !== null ? centerLocation.lat : userLocation.lat;
-    const targetLng =
-      centerLocation.lng !== null ? centerLocation.lng : userLocation.lng;
+    const targetLat = centerLocation.lat !== null ? centerLocation.lat : userLocation.lat;
+    const targetLng = centerLocation.lng !== null ? centerLocation.lng : userLocation.lng;
     if (targetLat === null || targetLng === null) return;
 
     let isFetching = false;
@@ -316,12 +296,7 @@ const MapPage = () => {
         // 각 항목에 거리(distance) 추가
         const formatted = (response || []).map((item) => ({
           ...item,
-          distance: Math.round(
-            distance(
-              { lat: targetLat, lng: targetLng },
-              { lat: item.lat, lng: item.lng }
-            )
-          ),
+          distance: Math.round(distance({ lat: targetLat, lng: targetLng }, { lat: item.lat, lng: item.lng })),
         }));
 
         // 거리 기준 오름차순 정렬
@@ -361,21 +336,14 @@ const MapPage = () => {
           const markers = formatted
             .filter((item) => item.lat && item.lng)
             .map((item) => {
-              const iconSrc =
-                iconMap[item.filterType?.toLowerCase()] || reportIcon;
+              const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
 
               const marker = new window.kakao.maps.Marker({
                 position: new window.kakao.maps.LatLng(item.lat, item.lng),
-                image: new window.kakao.maps.MarkerImage(
-                  iconSrc,
-                  new window.kakao.maps.Size(22, 22),
-                  { offset: new window.kakao.maps.Point(12, 24) }
-                ),
+                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(22, 22), { offset: new window.kakao.maps.Point(12, 24) }),
               });
 
-              window.kakao.maps.event.addListener(marker, "click", () =>
-                onClickListItem(item)
-              );
+              window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
 
               return marker;
             });
@@ -387,11 +355,7 @@ const MapPage = () => {
           if (searchLat && searchLng) {
             const pingMarker = new window.kakao.maps.Marker({
               position: new window.kakao.maps.LatLng(searchLat, searchLng),
-              image: new window.kakao.maps.MarkerImage(
-                pingIcon,
-                new window.kakao.maps.Size(32, 32),
-                { offset: new window.kakao.maps.Point(16, 32) }
-              ),
+              image: new window.kakao.maps.MarkerImage(pingIcon, new window.kakao.maps.Size(32, 32), { offset: new window.kakao.maps.Point(16, 32) }),
               zIndex: 1000,
             });
 
@@ -442,11 +406,7 @@ const MapPage = () => {
       )}
       {/* ===== 검색바 영역 ===== */}
       <div className="mapPage-searchBar">
-        <MapPageSearchBar
-          place={place}
-          setSelectData={setSelectData}
-          selectData={selectData}
-        />
+        <MapPageSearchBar place={place} setSelectData={setSelectData} selectData={selectData} />
         <div className="mapPage-searchSettings">
           <SettingIcon />
         </div>
@@ -500,8 +460,7 @@ const MapPage = () => {
         }}
         handleComponent={{
           top: <div className="mapPage-bottomSheetBar" />,
-        }}
-      >
+        }}>
         <div className="mapPage-bottomSheetContent">
           {detailDataLoading && (
             <div className="spinner-dots mapPage detail">
@@ -532,31 +491,21 @@ const MapPage = () => {
                 {FILTER_OPTIONS.map(({ key, label }) => (
                   <button
                     key={key}
-                    className={`mapPage-filterItem${
-                      filters[key] ? " mapPage-filterItem--active" : ""
-                    }`}
+                    className={`mapPage-filterItem${filters[key] ? " mapPage-filterItem--active" : ""}`}
                     onClick={() =>
                       setFilters((prev) => ({
                         ...prev,
                         [key]: !prev[key],
                       }))
-                    }
-                  >
+                    }>
                     {label}
                   </button>
                 ))}
               </div>
 
-              <div
-                className="mapPage-list scroll"
-                style={{ overflowY: "auto", maxHeight: "66vh" }}
-              >
+              <div className="mapPage-list scroll" style={{ overflowY: "auto", maxHeight: "66vh" }}>
                 {data?.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="mapPage-list-item"
-                    onClick={() => onClickListItem(item)}
-                  >
+                  <div key={idx} className="mapPage-list-item" onClick={() => onClickListItem(item)}>
                     <div className="mapPage-list-item-icon">
                       {item.filterType === "user" && <ReportIcon />}
                       {item.filterType === "police" && <DetalIcon />}
@@ -568,11 +517,7 @@ const MapPage = () => {
                     <div className="mapPage-list-item-content">
                       <p className="sub-title-3">{item.title}</p>
                       <div className="body-2">
-                        <span>
-                          {item.distance >= 1000
-                            ? `${(item.distance / 1000).toFixed(2)}km`
-                            : `${item.distance}m`}
-                        </span>
+                        <span>{item.distance >= 1000 ? `${(item.distance / 1000).toFixed(2)}km` : `${item.distance}m`}</span>
                         <div className="mapPage-dot" />
                         <span>{item.location || "주소 정보 없음"}</span>
                       </div>
@@ -608,13 +553,7 @@ const MapPage = () => {
               <p className="body-3">{selectData.filterType}</p>
               <p className="body-2">
                 {selectData.location}
-                <span
-                  onClick={() =>
-                    navigator.clipboard.writeText(selectData.location)
-                  }
-                >
-                  복사
-                </span>
+                <span onClick={() => navigator.clipboard.writeText(selectData.location)}>복사</span>
               </p>
             </div>
           )}
@@ -630,15 +569,7 @@ const MapPage = () => {
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
                   {selectData.report.lotAddress}
-                  <span
-                    onClick={() =>
-                      navigator.clipboard.writeText(
-                        selectData.report.lotAddress
-                      )
-                    }
-                  >
-                    복사
-                  </span>
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
