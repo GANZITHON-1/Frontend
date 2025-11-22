@@ -341,7 +341,7 @@ const MapPage = () => {
   return (
     <section className="mapPage">
       {listDataLoading && (
-        <div className="spinner-dots">
+        <div className="spinner-dots mapPage">
           <div></div>
           <div></div>
           <div></div>
@@ -406,7 +406,7 @@ const MapPage = () => {
         }}>
         <div className="mapPage-bottomSheetContent">
           {detailDataLoading && (
-            <div className="spinner-dots">
+            <div className="spinner-dots mapPage">
               <div></div>
               <div></div>
               <div></div>
