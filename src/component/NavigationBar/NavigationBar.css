@@ -1,9 +1,10 @@
 .navibar {
   display: flex;
-  width: 375px;
+  /* width: 375px; */
   padding: 10px;
   align-items: center;
-  gap: 119px;
+  /* gap: 119px; */
+  position: relative;
 
   padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
   padding-bottom: 10px;
@@ -31,6 +32,9 @@
 
 /* 제목 스타일 */
 .navibar_title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   color: var(--Black, #000);
   text-align: center;
 

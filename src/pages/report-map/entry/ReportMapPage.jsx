@@ -5,7 +5,8 @@ import { useGeocoder } from "../../../hook/useGeocoder";
 import pingIcon from "../../../assets/map/marker/ping.svg";
 
 export default function ReportMapPage() {
-  const { state } = useLocation();
+  const location = useLocation();
+  const state = location.state;
   const selectedPlace = state?.place;
 
   const mapRef = useRef(null);
@@ -73,8 +74,13 @@ export default function ReportMapPage() {
   const handleSelect = () =>
     nav("/report", {
       state: {
-        address: selectedPlace.address_name,
-        name: selectedPlace.place_name,
+        selectedAddress: {
+          roadAddress: selectedPlace.address_name,
+          lotAddress: selectedPlace.address_name,
+          lat: coord.lat,
+          lng: coord.lng,
+        },
+        prevTitle: location.state?.prevTitle,
       },
     });
 

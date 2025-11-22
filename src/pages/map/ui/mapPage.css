@@ -32,7 +32,7 @@
 
 .mapPage-mapButtons {
   position: absolute;
-  top: calc(-36px - 16px - 2.5rem - 8px);
+  top: calc(-36px - 16px - 2.5rem - 2.5rem - 8px);
   right: 20px;
   display: flex;
   flex-direction: column;
@@ -126,14 +126,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 2.5rem;
+  /* height: 2.5rem; */
   gap: 20px;
   position: relative;
   margin-bottom: 24px;
 }
 
 .mapPage .mapPage-list-item .mapPage-list-item-content {
-  height: 2.5rem;
+  /* height: 2.5rem; */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -146,6 +146,13 @@
   justify-content: flex-start;
   gap: 6px;
   color: var(--gray-300);
+}
+
+div.mapPage-bottomSheet div.mapPage-list-item-content > div > span:nth-child(3) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50vw;
 }
 
 .mapPage .mapPage-list-item .mapPage-list-item-content div:nth-child(2) div.mapPage-dot {
@@ -197,16 +204,31 @@
 .mapPage-public-detail-title > p:nth-child(3) {
   color: var(--gray-600);
 }
-.mapPage-public-detail-title > p:nth-child(3) > span {
+.mapPage-public-detail-title .body-2 > span {
   color: var(--primary-300);
   cursor: pointer;
   margin-left: 8px;
+  padding-left: 8px;
+}
+
+.mapPage-public-detail > p > span {
+  color: var(--primary-300);
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 4px 8px;
+  display: inline-block;
+  border-radius: 6px;
+  user-select: none;
 }
 
 .mapPage-public-image {
   width: 100%;
   height: 142px;
   background-color: var(--gray-200);
+  border-radius: 16px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .mapPage-ai,
@@ -230,4 +252,47 @@
   margin-bottom: 20px;
   max-height: 25vh;
   overflow-y: scroll;
+}
+
+/* 로딩 */
+.spinner-dots.mapPage {
+  margin: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+
+  background-color: #c1c1c17c;
+}
+
+.spinner-dots.mapPage.detail {
+  background-color: white;
+  width: calc(100% - 40px);
+  height: 100%;
+}
+
+.spinner-dots.mapPage div {
+  width: 10px;
+  height: 10px;
+  margin: 3px;
+  border-radius: 50%;
+  background-color: #0063db;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.spinner-dots.mapPage div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.spinner-dots.mapPage div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  to {
+    transform: translateY(-10px);
+    opacity: 0.5;
+  }
 }

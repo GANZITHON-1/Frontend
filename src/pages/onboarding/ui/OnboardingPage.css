@@ -1,13 +1,13 @@
-.slide .background {
-  position: fixed;
+.slide .onboarding-background {
+  position: relative;
   width: 100%;
   min-height: calc(100vh - 373px);
   overflow: hidden;
   z-index: 0;
 }
 
-.slide .background img {
-  position: fixed;
+.slide .onboarding-background img {
+  position: absolute;
   display: block;
   width: 100%;
   height: 100%;
@@ -15,7 +15,7 @@
 }
 
 /* 첫 번째 슬라이드 배경 확대 */
-.slide.zoom-1 .background img {
+.slide.zoom-1 .onboarding-background img {
   position: relative;
   transform: scale(1.95);
   left: 170px;
@@ -25,7 +25,7 @@
 }
 
 /* 두 번째 슬라이드 배경 확대 */
-.slide.zoom-2 .background img {
+.slide.zoom-2 .onboarding-background img {
   position: relative;
   transform: scale(0.85);
   top: 50px;
@@ -34,7 +34,7 @@
 }
 
 /* 세 번째 슬라이드 배경 확대 */
-.slide.zoom-3 .background img {
+.slide.zoom-3 .onboarding-background img {
   position: relative;
   transform: scale(0.85);
   bottom: 240px;
@@ -65,8 +65,8 @@
   width: 100% !important;
 }
 
-.box {
-  position: fixed;
+.onboarding-box {
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
@@ -76,7 +76,7 @@
   background: var(--White, #fff);
 }
 
-.boldText {
+.onboarding-boldText {
   width: 258px;
   color: var(--Black, #000);
   padding-bottom: 10px;
@@ -89,7 +89,7 @@
   line-height: 140%; /* 33.6px */
 }
 
-.subText {
+.onboarding-subText {
   align-self: stretch;
   color: var(--Gray-300, #9ca3af);
 

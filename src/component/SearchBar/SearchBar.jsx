@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import searchIcon from "../../assets/icons/search.svg";
-import micIcon from "../../assets/icons/mic.svg";
 import "../../pages/report-search/ui/ReportSearchPage.css";
 
 export default function SearchBar({ setPlaces }) {
@@ -63,7 +62,6 @@ export default function SearchBar({ setPlaces }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <img src={micIcon} alt="음성검색" className="mic-icon" />
       </div>
     </div>
   );

@@ -16,7 +16,6 @@ export const apiGetMapPageDataByFilter = async (data) => {
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
-      alert(res.data.message || "데이터 검색 오류");
       return [];
     }
     return false;
@@ -28,11 +27,12 @@ export const apiGetMapPageDataByFilter = async (data) => {
 
 export const apiGetMapPagePublicData = async (markerId) => {
   try {
-    const res = await api.get(`/map/markers/public/${markerId}`);
+    const res = await api.get(`/map/markers/public/${markerId}`, {
+      timeout: 5000,
+    });
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
-      alert(res.data.message || "데이터 검색 오류");
       return {};
     }
     return {};
@@ -44,11 +44,12 @@ export const apiGetMapPagePublicData = async (markerId) => {
 
 export const apiGetMapPageUserData = async (markerId) => {
   try {
-    const res = await api.get(`/report/${markerId}`);
+    const res = await api.get(`/report/${markerId}`, {
+      timeout: 5000,
+    });
     if (res.data.success === true) {
       return res.data.data;
     } else if (res.data.success === false) {
-      alert(res.data.message || "데이터 검색 오류");
       return {};
     }
     return {};

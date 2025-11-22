@@ -98,7 +98,7 @@ export function OnboardingPage() {
                   : ""
               }`}
             >
-              <div className="background">
+              <div className="onboarding-background">
                 <img src={slide.bgImage} alt={`bg-${slide.id}`} />
                 {slide.hasIcons && (
                   <div className="iconsImage">
@@ -106,9 +106,9 @@ export function OnboardingPage() {
                   </div>
                 )}
               </div>
-              <div className="box">
-                <div className="boldText">{slide.title}</div>
-                <div className="subText">{slide.subtitle}</div>
+              <div className="onboarding-box">
+                <div className="onboarding-boldText">{slide.title}</div>
+                <div className="onboarding-subText">{slide.subtitle}</div>
               </div>
             </div>
           </SwiperSlide>

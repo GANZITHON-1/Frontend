@@ -93,7 +93,7 @@
 }
 
 /* 버튼 */
-.submit-btn {
+.report-page .submit-btn {
   width: 161px;
   height: 45px;
   background-color: #eff6ff; /* 비활성화 상태 */
