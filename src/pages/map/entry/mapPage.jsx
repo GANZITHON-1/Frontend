@@ -212,7 +212,7 @@ const MapPage = () => {
 
     // 검색해서 들어온 위치가 있다면 그 위치로 이동
     if (searchLat && searchLng) {
-      setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
+      setCenterLocation({ lat: searchLat, lng: searchLng });
       setPlace(searchKeyword || "");
       moveMapCenter(searchLat, searchLng);
       return;
