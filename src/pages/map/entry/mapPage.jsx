@@ -1,7 +1,7 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../ui/mapPage.css";
 import { Resizable } from "re-resizable";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
@@ -39,11 +39,21 @@ const FILTER_OPTIONS = [
 const MapPage = () => {
   const nav = useNavigate();
 
-  //  검색 결과로 전달되는 값 (좌표)
-  const state = useLocation().state;
-  const searchLat = state?.lat;
-  const searchLng = state?.lng;
-  const searchKeyword = state?.search;
+  // 검색값을 localStorage에서 읽어 변수에 저장, 사용 후 즉시 localStorage에서 삭제
+  let searchLat = null;
+  let searchLng = null;
+  let searchKeyword = "";
+  try {
+    const searchData = JSON.parse(localStorage.getItem("mapSearch"));
+    if (searchData) {
+      searchLat = searchData.lat ?? null;
+      searchLng = searchData.lng ?? null;
+      searchKeyword = searchData.search ?? "";
+      localStorage.removeItem("mapSearch");
+    }
+  } catch {
+    // 파싱 오류 시 무시
+  }
 
   // 로딩
   const [listDataLoading, setListDataLoading] = useState(false);
@@ -224,22 +234,15 @@ const MapPage = () => {
 
     mapRef.current = new window.kakao.maps.Map(container, options);
 
-    // 검색해서 들어온 위치가 있다면 그 위치로 이동
-    // if (searchLat && searchLng) {
-    //   setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
-    //   setPlace(searchKeyword || "");
-    //   moveMapCenter(searchLat, searchLng);
-    //   return;
-    // }
-
+    // localStorage에서 읽은 검색값이 있으면 해당 위치로 이동
     if (searchLat && searchLng) {
-      // userLocation 건들지 않고 검색 좌표만 중심 좌표로 기록
       setCenterLocation({ lat: searchLat, lng: searchLng });
       moveMapCenter(searchLat, searchLng);
       setPlace(searchKeyword || "");
       return;
     }
 
+    // 검색값 없으면 현위치로 이동
     moveToCurrentLocation();
   }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
@@ -570,9 +573,8 @@ const MapPage = () => {
                 </div>
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
-                  {selectData.report.roadAddress}
-                  {selectData.report.lotAddress}
-                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + selectData.report.lotAddress)}>복사</span>
+                  {selectData.report.roadAddress},{selectData.report.lotAddress}
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + ", " + selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
