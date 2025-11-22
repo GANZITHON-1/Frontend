@@ -234,11 +234,13 @@ const MapPage = () => {
 
     mapRef.current = new window.kakao.maps.Map(container, options);
 
-    // localStorage에서 읽은 검색값이 있으면 해당 위치로 이동
+    // localStorage에서 읽은 검색값이 있으면 해당 위치로 이동 및 검색어 반영
     if (searchLat && searchLng) {
       setCenterLocation({ lat: searchLat, lng: searchLng });
       moveMapCenter(searchLat, searchLng);
       setPlace(searchKeyword || "");
+      // 리스트도 바로 갱신되도록 setData([])로 초기화
+      setData([]);
       return;
     }
 
