@@ -44,6 +44,10 @@ const MapPage = () => {
   const searchLng = state?.lng;
   const searchKeyword = state?.search;
 
+  // 로딩
+  const [listDataLoading, setListDataLoading] = useState(false);
+  const [detailDataLoading, setDetailDataLoading] = useState(false);
+
   // 지도 관련
   const mapRef = useRef(null);
   const markerRef = useRef(null);
@@ -199,21 +203,24 @@ const MapPage = () => {
    */
   const onClickListItem = useCallback(async (item) => {
     if (!item) return;
-
-    let detail = {};
-    if (item.sourceType === "USER") {
-      detail = (await apiGetMapPageUserData(item.markerId)) || {};
-      setSelectData(detail);
-      setResizeHeight(40);
-    } else if (item.sourceType === "PUBLIC") {
-      detail = (await apiGetMapPagePublicData(item.markerId)) || {};
-      setSelectData(detail);
-      setResizeHeight(18);
-    } else {
-      return;
+    setDetailDataLoading(true);
+    try {
+      let detail = {};
+      if (item.sourceType === "USER") {
+        detail = (await apiGetMapPageUserData(item.markerId)) || {};
+        setSelectData(detail);
+        setResizeHeight(40);
+      } else if (item.sourceType === "PUBLIC") {
+        detail = (await apiGetMapPagePublicData(item.markerId)) || {};
+        setSelectData(detail);
+        setResizeHeight(18);
+      } else {
+        return;
+      }
+      setShowGpsButtons(false);
+    } finally {
+      setDetailDataLoading(false);
     }
-
-    setShowGpsButtons(false);
   }, []);
 
   /**
@@ -230,86 +237,90 @@ const MapPage = () => {
         return;
       }
       isFetching = true;
+      setListDataLoading(true);
+      try {
+        const radius = getApproxMapRadiusKm();
+        const response = await apiGetMapPageDataByFilter({
+          filters: activeFilterKeys,
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+          radius: radius,
+        });
 
-      const radius = getApproxMapRadiusKm();
-      const response = await apiGetMapPageDataByFilter({
-        filters: activeFilterKeys,
-        lat: userLocation.lat,
-        lng: userLocation.lng,
-        radius: radius,
-      });
+        // 각 항목에 거리(distance) 추가
+        const formatted = (response || []).map((item) => ({
+          ...item,
+          distance: Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng })),
+        }));
 
-      // 각 항목에 거리(distance) 추가
-      const formatted = (response || []).map((item) => ({
-        ...item,
-        distance: Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng })),
-      }));
+        // 거리 기준 오름차순 정렬
+        formatted.sort((a, b) => a.distance - b.distance);
+        setData(formatted);
 
-      // 거리 기준 오름차순 정렬
-      formatted.sort((a, b) => a.distance - b.distance);
-      setData(formatted);
-
-      // 기존 마커 정리
-      if (window._clusterer) window._clusterer.clear();
-      if (window._markers) {
-        window._markers.forEach((m) => m.setMap(null));
-      }
-      window._markers = [];
-      if (window._pingMarker) {
-        window._pingMarker.setMap(null);
-        window._pingMarker = null;
-      }
-
-      // 아이콘 매핑
-      const iconMap = {
-        user: reportIcon,
-        police: detalIcon,
-        traffic: carIcon,
-        cctv: cctvIcon,
-        bell: bellIcon,
-      };
-
-      if (mapRef.current && window.kakao?.maps) {
-        if (!window._clusterer) {
-          window._clusterer = new window.kakao.maps.MarkerClusterer({
-            map: mapRef.current,
-            averageCenter: true,
-            minLevel: 4,
-            gridSize: 40,
-          });
+        // 기존 마커 정리
+        if (window._clusterer) window._clusterer.clear();
+        if (window._markers) {
+          window._markers.forEach((m) => m.setMap(null));
+        }
+        window._markers = [];
+        if (window._pingMarker) {
+          window._pingMarker.setMap(null);
+          window._pingMarker = null;
         }
 
-        const markers = formatted
-          .filter((item) => item.lat && item.lng)
-          .map((item) => {
-            const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
+        // 아이콘 매핑
+        const iconMap = {
+          user: reportIcon,
+          police: detalIcon,
+          traffic: carIcon,
+          cctv: cctvIcon,
+          bell: bellIcon,
+        };
 
-            const marker = new window.kakao.maps.Marker({
-              position: new window.kakao.maps.LatLng(item.lat, item.lng),
-              image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(22, 22), { offset: new window.kakao.maps.Point(12, 24) }),
+        if (mapRef.current && window.kakao?.maps) {
+          if (!window._clusterer) {
+            window._clusterer = new window.kakao.maps.MarkerClusterer({
+              map: mapRef.current,
+              averageCenter: true,
+              minLevel: 4,
+              gridSize: 40,
+            });
+          }
+
+          const markers = formatted
+            .filter((item) => item.lat && item.lng)
+            .map((item) => {
+              const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
+
+              const marker = new window.kakao.maps.Marker({
+                position: new window.kakao.maps.LatLng(item.lat, item.lng),
+                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(22, 22), { offset: new window.kakao.maps.Point(12, 24) }),
+              });
+
+              window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
+
+              return marker;
             });
 
-            window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
+          window._clusterer.addMarkers(markers);
+          window._markers = markers;
 
-            return marker;
-          });
+          // 검색 위치 핑 생성
+          if (searchLat && searchLng) {
+            const pingMarker = new window.kakao.maps.Marker({
+              position: new window.kakao.maps.LatLng(searchLat, searchLng),
+              image: new window.kakao.maps.MarkerImage(pingIcon, new window.kakao.maps.Size(32, 32), { offset: new window.kakao.maps.Point(16, 32) }),
+              zIndex: 1000,
+            });
 
-        window._clusterer.addMarkers(markers);
-        window._markers = markers;
-
-        // 검색 위치 핑 생성
-        if (searchLat && searchLng) {
-          const pingMarker = new window.kakao.maps.Marker({
-            position: new window.kakao.maps.LatLng(searchLat, searchLng),
-            image: new window.kakao.maps.MarkerImage(pingIcon, new window.kakao.maps.Size(32, 32), { offset: new window.kakao.maps.Point(16, 32) }),
-            zIndex: 1000,
-          });
-
-          pingMarker.setMap(mapRef.current);
-          window._pingMarker = pingMarker;
+            pingMarker.setMap(mapRef.current);
+            window._pingMarker = pingMarker;
+          }
         }
+      } finally {
+        setListDataLoading(false);
+        isFetching = false;
       }
-      isFetching = false;
     };
 
     fetchData();
@@ -329,6 +340,13 @@ const MapPage = () => {
 
   return (
     <section className="mapPage">
+      {listDataLoading && (
+        <div className="spinner-dots">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      )}
       {/* ===== 검색바 영역 ===== */}
       <div className="mapPage-searchBar">
         <MapPageSearchBar place={place} setSelectData={setSelectData} selectData={selectData} />
@@ -387,6 +405,14 @@ const MapPage = () => {
           top: <div className="mapPage-bottomSheetBar" />,
         }}>
         <div className="mapPage-bottomSheetContent">
+          {detailDataLoading && (
+            <div className="spinner-dots">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          )}
+
           {showGpsButtons && (
             <div className="mapPage-mapButtons">
               <button type="button" onClick={() => nav("/report")}>
@@ -443,6 +469,20 @@ const MapPage = () => {
               </div>
             </>
           )}
+
+          {/* 공개 데이터 상세
+          {selectData.sourceType === "PUBLIC" && (
+            <div className="mapPage-public-detail">
+              <div>
+                <p className="sub-title-2">{selectData.title}</p>
+              </div>
+              <p className="body-3">{selectData.filterType}</p>
+              <p className="body-2">
+                {selectData.location}
+                <span onClick={() => navigator.clipboard.writeText(selectData.location)}>복사</span>
+              </p>
+            </div>
+          )} */}
 
           {/* 공개 데이터 상세 */}
           {selectData.sourceType === "PUBLIC" && (
