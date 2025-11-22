@@ -431,7 +431,7 @@ const MapPage = () => {
                     <div className="mapPage-list-item-content">
                       <p className="sub-title-3">{item.title}</p>
                       <div className="body-2">
-                        <span>{Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng }))}m</span>
+                        <span>{item.distance >= 1000 ? `${(item.distance / 1000).toFixed(2)}km` : `${item.distance}m`}</span>
                         <div className="mapPage-dot" />
                         <span>{item.location || "주소 정보 없음"}</span>
                       </div>

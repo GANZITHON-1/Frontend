@@ -204,7 +204,7 @@ div.mapPage-bottomSheet div.mapPage-list-item-content > div > span:nth-child(3) 
 .mapPage-public-detail-title > p:nth-child(3) {
   color: var(--gray-600);
 }
-.mapPage-public-detail-title > p:nth-child(3) > span {
+.mapPage-public-detail-title .body-2 > span {
   color: var(--primary-300);
   cursor: pointer;
   margin-left: 8px;
