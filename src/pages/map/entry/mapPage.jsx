@@ -39,21 +39,26 @@ const FILTER_OPTIONS = [
 const MapPage = () => {
   const nav = useNavigate();
 
-  // 검색값을 localStorage에서 읽어 변수에 저장, 사용 후 즉시 localStorage에서 삭제
-  let searchLat = null;
-  let searchLng = null;
-  let searchKeyword = "";
-  try {
-    const searchData = JSON.parse(localStorage.getItem("mapSearch"));
-    if (searchData) {
-      searchLat = searchData.lat ?? null;
-      searchLng = searchData.lng ?? null;
-      searchKeyword = searchData.search ?? "";
+  // 검색값을 localStorage에서 한 번만 읽어 유지
+  const searchParams = useMemo(() => {
+    try {
+      const stored = localStorage.getItem("mapSearch");
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
       localStorage.removeItem("mapSearch");
+      return {
+        lat: typeof parsed.lat === "number" ? parsed.lat : Number(parsed.lat ?? null),
+        lng: typeof parsed.lng === "number" ? parsed.lng : Number(parsed.lng ?? null),
+        keyword: parsed.search || "",
+      };
+    } catch {
+      return null;
     }
-  } catch {
-    // 파싱 오류 시 무시
-  }
+  }, []);
+
+  const searchLat = Number.isFinite(searchParams?.lat) ? searchParams.lat : null;
+  const searchLng = Number.isFinite(searchParams?.lng) ? searchParams.lng : null;
+  const searchKeyword = searchParams?.keyword || "";
 
   // 로딩
   const [listDataLoading, setListDataLoading] = useState(false);
