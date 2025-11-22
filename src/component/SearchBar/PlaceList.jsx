@@ -13,13 +13,16 @@ export default function PlaceList({ places, mode, prevTitle }) {
     }
 
     if (mode === "map") {
-      nav("/map", {
-        state: {
+      // localStorage에 좌표/검색어 저장 후 /map으로 이동
+      localStorage.setItem(
+        "mapSearch",
+        JSON.stringify({
           lat: Number(place.y),
           lng: Number(place.x),
           search: place.place_name,
-        },
-      });
+        })
+      );
+      window.location.href = "/map";
       return;
     }
 
