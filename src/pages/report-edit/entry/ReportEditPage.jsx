@@ -5,6 +5,7 @@ import "../ui/ReportEditPage.css";
 import uploadIcon from "../../../assets/icons/upload.svg";
 import warningIcon from "../../../assets/icons/warning.svg";
 import { api } from "../../../api/index"; // 연동 위해 추가했습니다
+import ReportEditSkeleton from "./ReportEditSkeleton"; // 로딩 상태
 
 export default function ReportEditPage() {
   const { reportId } = useParams(); // URL 파라미터로 reportId 받음
@@ -17,6 +18,7 @@ export default function ReportEditPage() {
   const [photoFile, setPhotoFile] = useState(null); // 새로 업로드할 파일
   const [content, setContent] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true); //로딩상태 추가
 
   // 기존 데이터 불러오기 (axios 스타일로 수정했습니다!)
   useEffect(() => {
@@ -42,6 +44,8 @@ export default function ReportEditPage() {
       } catch (err) {
         console.error("제보 불러오기 실패:", err);
         alert("제보 데이터를 불러올 수 없습니다.");
+      } finally {
+        setLoading(false); // 로딩
       }
     };
 
@@ -63,8 +67,10 @@ export default function ReportEditPage() {
 
     const newErrors = {};
     if (!title.trim()) newErrors.title = "제목을 입력해 주세요.";
-    if (!address.trim() || !detail.trim()) newErrors.address = "위치를 입력해 주세요.";
-    if (!content.trim() || content.trim().length < 30) newErrors.content = "설명을 최소 30자 이상 입력해 주세요.";
+    if (!address.trim() || !detail.trim())
+      newErrors.address = "위치를 입력해 주세요.";
+    if (!content.trim() || content.trim().length < 30)
+      newErrors.content = "설명을 최소 30자 이상 입력해 주세요.";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
@@ -105,6 +111,15 @@ export default function ReportEditPage() {
     }
   };
 
+  // 🔥 로딩 중이면 스켈레톤 화면 렌더링
+  if (loading)
+    return (
+      <div>
+        <NavigationBar title="제보 수정" />
+        <ReportEditSkeleton />
+      </div>
+    );
+
   return (
     <div>
       <NavigationBar title="제보 수정" />
@@ -113,7 +128,12 @@ export default function ReportEditPage() {
         {/* 제목 */}
         <div className="form-section">
           <label className="form-label">제목</label>
-          <input type="text" className={`input-box ${errors.title ? "error" : ""}`} value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input
+            type="text"
+            className={`input-box ${errors.title ? "error" : ""}`}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           {errors.title && (
             <div className="error-msg">
               <img src={warningIcon} alt="warning" className="warning-icon" />
@@ -167,7 +187,13 @@ export default function ReportEditPage() {
               </div>
             )}
           </label>
-          <input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden-input" />
+          <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden-input"
+          />
           {errors.photo && (
             <div className="error-msg">
               <img src={warningIcon} alt="warning" className="warning-icon" />

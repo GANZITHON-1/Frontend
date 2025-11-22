@@ -14,6 +14,7 @@ export function MyReportsPage() {
   const [userLocation, setUserLocation] = useState({ lat: null, lng: null });
   const distance = useDistance();
   const { addressToCoord } = useGeocoder();
+  const [loading, setLoading] = useState(true);
 
   // 내 위치 가져오기
   useEffect(() => {
@@ -72,6 +73,8 @@ export function MyReportsPage() {
       } catch (err) {
         console.error("API 오류:", err);
         setReports([]);
+      } finally {
+        setLoading(false); // 로딩
       }
     };
 
@@ -83,24 +86,38 @@ export function MyReportsPage() {
       <div className="navigationbar">
         <NavigationBar title="내 제보 목록" />
       </div>
-      <div className="container">
-        {reports.length > 0 &&
-          reports.map((report) => (
-            <div
-              key={report.reportId}
-              className="reportBox"
-              onClick={() => navigate(`/report-edit/${report.reportId}`)}
-            >
-              <div>
-                <div className="reportTitle">{report.title}</div>
-                <div className="reportSubText">
-                  {report.distance}m • {report.location}
+      {loading && (
+        <div className="spinner-dots">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      )}
+
+      {!loading && (
+        <div className="container">
+          {reports.length > 0 &&
+            reports.map((report) => (
+              <div
+                key={report.reportId}
+                className="reportBox"
+                onClick={() => navigate(`/report-edit/${report.reportId}`)}
+              >
+                <div>
+                  <div className="reportTitle">{report.title}</div>
+                  <div className="reportSubText">
+                    {report.distance}m • {report.location}
+                  </div>
                 </div>
+                <img
+                  src={detailIcon}
+                  alt="detailIcon"
+                  className="detailIcon1"
+                />
               </div>
-              <img src={detailIcon} alt="detailIcon" className="detailIcon1" />
-            </div>
-          ))}
-      </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 }
