@@ -406,7 +406,7 @@ const MapPage = () => {
         }}>
         <div className="mapPage-bottomSheetContent">
           {detailDataLoading && (
-            <div className="spinner-dots mapPage">
+            <div className="spinner-dots mapPage detail">
               <div></div>
               <div></div>
               <div></div>
