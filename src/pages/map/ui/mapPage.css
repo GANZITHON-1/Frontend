@@ -271,7 +271,7 @@ div.mapPage-bottomSheet div.mapPage-list-item-content > div > span:nth-child(3) 
 .spinner-dots.mapPage.detail {
   background-color: white;
   width: calc(100% - 40px);
-  height: 50px;
+  height: 100%;
 }
 
 .spinner-dots.mapPage div {
