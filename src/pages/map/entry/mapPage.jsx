@@ -310,11 +310,14 @@ const MapPage = () => {
   useEffect(() => {
     if (isDetailOpen) {
       setShowGpsButtons(false);
-      setResizeHeight((prev) => (prev < 40 ? 40 : prev));
+      setResizeHeight(() => {
+        const targetMin = selectData.sourceType === "PUBLIC" ? 18 : 40;
+        return targetMin;
+      });
     } else {
       setShowGpsButtons(true);
     }
-  }, [isDetailOpen]);
+  }, [isDetailOpen, selectData.sourceType]);
 
   return (
     <section className="mapPage">

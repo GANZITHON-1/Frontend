@@ -126,14 +126,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 2.5rem;
+  /* height: 2.5rem; */
   gap: 20px;
   position: relative;
   margin-bottom: 24px;
 }
 
 .mapPage .mapPage-list-item .mapPage-list-item-content {
-  height: 2.5rem;
+  /* height: 2.5rem; */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -146,6 +146,12 @@
   justify-content: flex-start;
   gap: 6px;
   color: var(--gray-300);
+}
+
+div.mapPage-bottomSheet div.mapPage-list-item-content > div > span:nth-child(3) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mapPage .mapPage-list-item .mapPage-list-item-content div:nth-child(2) div.mapPage-dot {
