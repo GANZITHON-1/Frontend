@@ -1,0 +1,20 @@
+.mapPage-severity {
+  height: 24px;
+  width: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.mapPage-severity.safety {
+  background-color: var(--green-200);
+}
+
+.mapPage-severity.caution {
+  background-color: var(--yellow);
+}
+.mapPage-severity.danger {
+  background-color: var(--red-300);
+}

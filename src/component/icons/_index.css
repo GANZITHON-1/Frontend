@@ -1,0 +1,36 @@
+.iconsStyleClass {
+  /* 배경 설정 */
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  max-width: 2.5rem;
+  max-height: 2.5rem;
+  border-radius: 50%;
+  z-index: 999;
+  transition: all 0.3s ease;
+  position: relative;
+
+  /* 중앙 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.iconsStyleClass > div {
+  /* 찌그러짐 방지 */
+  width: 1.25rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  max-width: 1.25rem;
+  max-height: 1.25rem;
+  display: block; /* 또는 flex가 필요하면 flex로 */
+
+  /* 중앙 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

@@ -1,0 +1,173 @@
+.signup-container {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+.container {
+  overflow: hidden;
+  padding: 10px 20px;
+  position: relative;
+  min-height: 100dvh;
+}
+
+.title {
+  align-self: stretch;
+  color: var(--Black, #000);
+  padding-bottom: 20px;
+
+  /* Title/bold01 */
+  font-family: Pretendard;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%; /* 33.6px */
+}
+
+/* input */
+.inputBox {
+  margin-top: 27px;
+}
+
+.inputTitle {
+  align-self: stretch;
+  color: var(--Gray-600, #1f2937);
+
+  /* Subtitle/semibold02 */
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%; /* 21.6px */
+}
+
+.inputTitle-hidden {
+  opacity: 0;
+}
+
+.signup-input {
+  display: flex;
+  height: 45px;
+  width: 100%;
+  padding: 12px 20px;
+  align-items: center;
+  gap: 4px;
+  margin: auto;
+  border-radius: 12px;
+  background: var(--Gray-50, #f9fafb);
+  border: none;
+  margin-top: 8px;
+}
+
+.signup-input::placeholder {
+  color: var(--Gray-300, #9ca3af);
+}
+
+.signup-input.active {
+  border: 1px solid var(--Gray-200, #e5e7eb);
+  background: #fff;
+  color: var(--Black, #000);
+}
+
+.signup-input:focus {
+  outline: none;
+}
+
+.signup-input.error {
+  border: 1px solid var(--Red-300, #ef4444);
+}
+
+.input-wrapper {
+  position: relative;
+  margin-top: 10px;
+}
+
+.eyeIcon1 {
+  position: absolute;
+  right: 35px;
+  top: 177px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background-color: transparent;
+}
+
+.eyeIcon2 {
+  position: absolute;
+  right: 35px;
+  top: 230px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background-color: transparent;
+}
+
+.eyeIcon2-2 {
+  position: absolute;
+  right: 15px;
+  top: 25%;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background-color: transparent;
+}
+
+.errorText {
+  color: var(--Red-300, #ef4444);
+  padding: 8px 0;
+  display: none;
+
+  /* Body/medium02 */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%; /* 21px */
+}
+
+.btn {
+  display: flex;
+  position: absolute;
+  bottom: 170px;
+  height: 50px;
+  width: auto;
+  left: 20px;
+  right: 20px;
+  padding: 14px 56px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border-radius: 100px;
+  background: var(--Primary-50, #eff6ff);
+  color: var(--Primary-400, #2563eb);
+  border: none;
+
+  /* ButtonTitle/Bold01 */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.btn.active {
+  background: var(--Primary-400, #2563eb);
+  color: var(--Primary-50, #eff6ff);
+}
+
+.welcomeText {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--Black, #000);
+  text-align: center;
+
+  /* Title 1 */
+  font-family: Pretendard;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}

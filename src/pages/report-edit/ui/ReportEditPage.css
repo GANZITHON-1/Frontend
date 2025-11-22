@@ -1,0 +1,100 @@
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+  flex: 1;
+  background-color: #f3f4f6;
+  color: #555;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 56px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 63px;
+}
+
+.delete-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* 수정 버튼 (항상 파란색) */
+.edit-page .submit-btn {
+  flex: 2;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 56px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 161px;
+}
+
+.submit-btn:hover {
+  background-color: #0063db;
+}
+
+/* 스캘레톤 */
+.skeleton {
+  background: #e5e7eb;
+  border-radius: 8px;
+  animation: skeleton-loading 1.4s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #e5e7eb;
+  }
+  50% {
+    background-color: #f3f4f6;
+  }
+  100% {
+    background-color: #e5e7eb;
+  }
+}
+
+.skeleton-title {
+  width: 120px;
+  height: 20px;
+  margin-bottom: 16px;
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 48px;
+  margin-bottom: 12px;
+}
+
+.skeleton-photo {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.skeleton-textarea {
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.skeleton-btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.skeleton-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 100px;
+}

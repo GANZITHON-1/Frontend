@@ -1,0 +1,46 @@
+.navibar {
+  display: flex;
+  /* width: 375px; */
+  padding: 10px;
+  align-items: center;
+  /* gap: 119px; */
+  position: relative;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* ← 버튼 스타일 */
+.navibar_back {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 제목 스타일 */
+.navibar_title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--Black, #000);
+  text-align: center;
+
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+}
