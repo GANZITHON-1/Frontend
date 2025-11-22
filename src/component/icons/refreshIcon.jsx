@@ -10,6 +10,10 @@ const RefreshIcon = () => {
     <div
       className="iconsStyleClass"
       style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "var(--gray-400)",
         backgroundColor: "var(--white)",
       }}>
       <div>

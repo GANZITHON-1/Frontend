@@ -63,6 +63,8 @@ const MapPage = () => {
     lng: null,
     heading: null,
   });
+  // 지도 중심 좌표 (리프레시용)
+  const [centerLocation, setCenterLocation] = useState({ lat: null, lng: null });
 
   const [showGpsButtons, setShowGpsButtons] = useState(true);
   const [resizeHeight, setResizeHeight] = useState(15.0);
@@ -190,14 +192,8 @@ const MapPage = () => {
   const handleRefreshButtonClick = useCallback(() => {
     if (!mapRef.current) return;
     const center = mapRef.current.getCenter();
-    // 지도 중심 좌표로 userLocation 갱신
-    setUserLocation((prev) => ({
-      ...prev,
-      lat: center.getLat(),
-      lng: center.getLng(),
-      // heading은 그대로 둠
-    }));
-    // 리스트 새로고침은 userLocation 변경에 따라 useEffect에서 자동 실행됨
+    setCenterLocation({ lat: center.getLat(), lng: center.getLng() });
+    // 리스트 새로고침은 centerLocation 변경에 따라 useEffect에서 자동 실행됨
   }, [mapRef]);
 
   /**
@@ -254,7 +250,10 @@ const MapPage = () => {
    * 지도 마커 + 핑 마커 표시
    */
   useEffect(() => {
-    if (userLocation.lat === null || userLocation.lng === null) return;
+    // 조회 기준: centerLocation이 있으면 그 좌표, 없으면 userLocation
+    const targetLat = centerLocation.lat !== null ? centerLocation.lat : userLocation.lat;
+    const targetLng = centerLocation.lng !== null ? centerLocation.lng : userLocation.lng;
+    if (targetLat === null || targetLng === null) return;
 
     let isFetching = false;
 
@@ -269,15 +268,15 @@ const MapPage = () => {
         const radius = getApproxMapRadiusKm();
         const response = await apiGetMapPageDataByFilter({
           filters: activeFilterKeys,
-          lat: userLocation.lat,
-          lng: userLocation.lng,
+          lat: targetLat,
+          lng: targetLng,
           radius: radius,
         });
 
         // 각 항목에 거리(distance) 추가
         const formatted = (response || []).map((item) => ({
           ...item,
-          distance: Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng })),
+          distance: Math.round(distance({ lat: targetLat, lng: targetLng }, { lat: item.lat, lng: item.lng })),
         }));
 
         // 거리 기준 오름차순 정렬
@@ -351,7 +350,18 @@ const MapPage = () => {
     };
 
     fetchData();
-  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem, distance]);
+  }, [
+    activeFilterKeys,
+    userLocation.lat,
+    userLocation.lng,
+    centerLocation.lat,
+    centerLocation.lng,
+    searchLat,
+    searchLng,
+    getApproxMapRadiusKm,
+    onClickListItem,
+    distance,
+  ]);
 
   useEffect(() => {
     if (isDetailOpen) {
