@@ -208,7 +208,7 @@ const MapPage = () => {
     } else if (item.sourceType === "PUBLIC") {
       detail = (await apiGetMapPagePublicData(item.markerId)) || {};
       setSelectData(detail);
-      setResizeHeight(15);
+      setResizeHeight(18);
     } else {
       return;
     }
@@ -406,7 +406,7 @@ const MapPage = () => {
                 ))}
               </div>
 
-              <div className="mapPage-list scroll">
+              <div className="mapPage-list scroll" style={{ overflowY: "auto" }}>
                 {data?.map((item, idx) => (
                   <div key={idx} className="mapPage-list-item" onClick={() => onClickListItem(item)}>
                     <div className="mapPage-list-item-icon">
