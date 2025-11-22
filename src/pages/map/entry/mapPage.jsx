@@ -340,7 +340,7 @@ const MapPage = () => {
             window._clusterer = new window.kakao.maps.MarkerClusterer({
               map: mapRef.current,
               averageCenter: true,
-              minLevel: 4,
+              minLevel: 5, // 더 넓은 범위에서 클러스터 표시
               gridSize: 40,
             });
           }
