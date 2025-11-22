@@ -409,7 +409,7 @@ const MapPage = () => {
                 ))}
               </div>
 
-              <div className="mapPage-list scroll" style={{ overflowY: "auto" }}>
+              <div className="mapPage-list scroll" style={{ overflowY: "auto", maxHeight: "66vh" }}>
                 {data?.map((item, idx) => (
                   <div key={idx} className="mapPage-list-item" onClick={() => onClickListItem(item)}>
                     <div className="mapPage-list-item-icon">
