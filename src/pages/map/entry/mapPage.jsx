@@ -239,7 +239,15 @@ const MapPage = () => {
         radius: radius,
       });
 
-      setData(response || []);
+      // 각 항목에 거리(distance) 추가
+      const formatted = (response || []).map((item) => ({
+        ...item,
+        distance: Math.round(distance({ lat: userLocation.lat, lng: userLocation.lng }, { lat: item.lat, lng: item.lng })),
+      }));
+
+      // 거리 기준 오름차순 정렬
+      formatted.sort((a, b) => a.distance - b.distance);
+      setData(formatted);
 
       // 기존 마커 정리
       if (window._clusterer) window._clusterer.clear();
@@ -271,7 +279,7 @@ const MapPage = () => {
           });
         }
 
-        const markers = (response || [])
+        const markers = formatted
           .filter((item) => item.lat && item.lng)
           .map((item) => {
             const iconSrc = iconMap[item.filterType?.toLowerCase()] || reportIcon;
@@ -305,7 +313,7 @@ const MapPage = () => {
     };
 
     fetchData();
-  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem]);
+  }, [activeFilterKeys, userLocation.lat, userLocation.lng, searchLat, searchLng, getApproxMapRadiusKm, onClickListItem, distance]);
 
   useEffect(() => {
     if (isDetailOpen) {
