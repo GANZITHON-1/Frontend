@@ -26,6 +26,7 @@ import carIcon from "../../../assets/map/marker/car.svg";
 import cctvIcon from "../../../assets/map/marker/cctv.svg";
 import pingIcon from "../../../assets/map/marker/ping.svg";
 import detalIcon from "../../../assets/map/marker/detal.svg";
+import RefreshIcon from "../../../component/icons/refreshIcon";
 
 const FILTER_OPTIONS = [
   { key: "user", label: "이웃 제보" },
@@ -161,17 +162,43 @@ const MapPage = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         const { latitude, longitude } = coords;
-        setUserLocation({ lat: latitude, lng: longitude, heading: null });
+        // 단순 이동만 수행
         moveMapCenter(latitude, longitude);
         updateUserMarker(latitude, longitude, null, false);
+        setUserLocation((prev) => ({
+          ...prev,
+          lat: latitude,
+          lng: longitude,
+          heading: null,
+        }));
       },
       () => alert("위치 정보를 가져올 수 없습니다.")
     );
   }, [checkGeolocationPermission, moveMapCenter, updateUserMarker]);
 
+  // 현위치 버튼: 저장된 사용자 위치로 지도 중심만 이동
   const handleGpsButtonClick = useCallback(() => {
-    moveToCurrentLocation();
-  }, [moveToCurrentLocation]);
+    if (userLocation.lat !== null && userLocation.lng !== null) {
+      moveMapCenter(userLocation.lat, userLocation.lng);
+      updateUserMarker(userLocation.lat, userLocation.lng, userLocation.heading);
+    } else {
+      moveToCurrentLocation(); // 위치 정보가 없으면 새로 가져옴
+    }
+  }, [userLocation, moveMapCenter, updateUserMarker, moveToCurrentLocation]);
+
+  // 리프레시 버튼: 현재 지도 중심 기준으로 리스트 새로고침
+  const handleRefreshButtonClick = useCallback(() => {
+    if (!mapRef.current) return;
+    const center = mapRef.current.getCenter();
+    // 지도 중심 좌표로 userLocation 갱신
+    setUserLocation((prev) => ({
+      ...prev,
+      lat: center.getLat(),
+      lng: center.getLng(),
+      // heading은 그대로 둠
+    }));
+    // 리스트 새로고침은 userLocation 변경에 따라 useEffect에서 자동 실행됨
+  }, [mapRef]);
 
   /**
    * 지도와 위치 정보를 초기화한다. location 값이 있으면 해당 위치로 이동한다.
@@ -213,7 +240,7 @@ const MapPage = () => {
       } else if (item.sourceType === "PUBLIC") {
         detail = (await apiGetMapPagePublicData(item.markerId)) || {};
         setSelectData(detail);
-        setResizeHeight(23);
+        setResizeHeight(22);
       } else {
         return;
       }
@@ -330,7 +357,7 @@ const MapPage = () => {
     if (isDetailOpen) {
       setShowGpsButtons(false);
       setResizeHeight(() => {
-        const targetMin = selectData.sourceType === "PUBLIC" ? 23 : 40;
+        const targetMin = selectData.sourceType === "PUBLIC" ? 22 : 40;
         return targetMin;
       });
     } else {
@@ -417,6 +444,9 @@ const MapPage = () => {
             <div className="mapPage-mapButtons">
               <button type="button" onClick={() => nav("/report")}>
                 <ReportIcon />
+              </button>
+              <button type="button" onClick={handleRefreshButtonClick}>
+                <RefreshIcon />
               </button>
               <button type="button" onClick={handleGpsButtonClick}>
                 <GpsIcon />
