@@ -1,16 +1,18 @@
-# React + Vite
+# 2025-GanziThon-1
+2025 간지톤 : MachThon 1팀 살펴
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<hr/>
 
-Currently, two official plugins are available:
+- **살펴**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+   "우리 동네, 안심하고 **살펴**보다" <br>
+   "이웃과 내가 만드는 우리 동네 안전지도, **살**"<br>
+   
+   살펴는 동네의 사건,사고,치안,위험 요소 등을 <br>
+   쉽고 직관적으로 파악할 수 있도록 돕는 "**생활 안전 정보 서비스**"입니다.<br>
+   
+  데이터와 제보를 기반으로, 로컬 이야기를 시각화합니다. <br>
+  불편, 민원은 문제 해결과 지역 문화로 연결됩니다.<br>
+  주민의 목소리로, 동네를 스스로 지키는 소통 플랫폼입니다.<br>
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+  <hr/>
