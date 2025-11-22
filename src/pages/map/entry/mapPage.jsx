@@ -1,7 +1,7 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../ui/mapPage.css";
 import { Resizable } from "re-resizable";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import ReportIcon from "../../../component/icons/reportIcon";
 import GpsIcon from "../../../component/icons/gpsIcon";
@@ -39,11 +39,26 @@ const FILTER_OPTIONS = [
 const MapPage = () => {
   const nav = useNavigate();
 
-  //  검색 결과로 전달되는 값 (좌표)
-  const state = useLocation().state;
-  const searchLat = state?.lat;
-  const searchLng = state?.lng;
-  const searchKeyword = state?.search;
+  // 검색값을 localStorage에서 한 번만 읽어 유지
+  const searchParams = useMemo(() => {
+    try {
+      const stored = localStorage.getItem("mapSearch");
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      localStorage.removeItem("mapSearch");
+      return {
+        lat: typeof parsed.lat === "number" ? parsed.lat : Number(parsed.lat ?? null),
+        lng: typeof parsed.lng === "number" ? parsed.lng : Number(parsed.lng ?? null),
+        keyword: parsed.search || "",
+      };
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const searchLat = Number.isFinite(searchParams?.lat) ? searchParams.lat : null;
+  const searchLng = Number.isFinite(searchParams?.lng) ? searchParams.lng : null;
+  const searchKeyword = searchParams?.keyword || "";
 
   // 로딩
   const [listDataLoading, setListDataLoading] = useState(false);
@@ -224,22 +239,17 @@ const MapPage = () => {
 
     mapRef.current = new window.kakao.maps.Map(container, options);
 
-    // 검색해서 들어온 위치가 있다면 그 위치로 이동
-    // if (searchLat && searchLng) {
-    //   setUserLocation({ lat: searchLat, lng: searchLng, heading: null });
-    //   setPlace(searchKeyword || "");
-    //   moveMapCenter(searchLat, searchLng);
-    //   return;
-    // }
-
+    // localStorage에서 읽은 검색값이 있으면 해당 위치로 이동 및 검색어 반영
     if (searchLat && searchLng) {
-      // userLocation 건들지 않고 검색 좌표만 중심 좌표로 기록
       setCenterLocation({ lat: searchLat, lng: searchLng });
       moveMapCenter(searchLat, searchLng);
       setPlace(searchKeyword || "");
+      // 리스트도 바로 갱신되도록 setData([])로 초기화
+      setData([]);
       return;
     }
 
+    // 검색값 없으면 현위치로 이동
     moveToCurrentLocation();
   }, [searchLat, searchLng, searchKeyword, moveMapCenter, moveToCurrentLocation]);
 
@@ -342,7 +352,7 @@ const MapPage = () => {
 
               const marker = new window.kakao.maps.Marker({
                 position: new window.kakao.maps.LatLng(item.lat, item.lng),
-                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(22, 22), { offset: new window.kakao.maps.Point(12, 24) }),
+                image: new window.kakao.maps.MarkerImage(iconSrc, new window.kakao.maps.Size(24, 24), { offset: new window.kakao.maps.Point(12, 24) }),
               });
 
               window.kakao.maps.event.addListener(marker, "click", () => onClickListItem(item));
@@ -570,9 +580,8 @@ const MapPage = () => {
                 </div>
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
-                  {selectData.report.roadAddress}
-                  {selectData.report.lotAddress}
-                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + selectData.report.lotAddress)}>복사</span>
+                  {selectData.report.roadAddress},{selectData.report.lotAddress}
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + ", " + selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
