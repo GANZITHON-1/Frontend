@@ -255,11 +255,16 @@ div.mapPage-bottomSheet div.mapPage-list-item-content > div > span:nth-child(3) 
 }
 
 /* 로딩 */
-/* 로딩  */
 .spinner-dots {
+  position: absolute;
   display: flex;
   justify-content: center;
-  margin-top: 360px;
+  align-items: center;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .spinner-dots div {

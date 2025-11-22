@@ -213,7 +213,7 @@ const MapPage = () => {
       } else if (item.sourceType === "PUBLIC") {
         detail = (await apiGetMapPagePublicData(item.markerId)) || {};
         setSelectData(detail);
-        setResizeHeight(18);
+        setResizeHeight(23);
       } else {
         return;
       }
@@ -330,7 +330,7 @@ const MapPage = () => {
     if (isDetailOpen) {
       setShowGpsButtons(false);
       setResizeHeight(() => {
-        const targetMin = selectData.sourceType === "PUBLIC" ? 18 : 40;
+        const targetMin = selectData.sourceType === "PUBLIC" ? 23 : 40;
         return targetMin;
       });
     } else {
