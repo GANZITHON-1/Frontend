@@ -179,6 +179,7 @@ const MapPage = () => {
         // 단순 이동만 수행
         moveMapCenter(latitude, longitude);
         updateUserMarker(latitude, longitude, null, false);
+        setCenterLocation({ lat: latitude, lng: longitude });
         setUserLocation((prev) => ({
           ...prev,
           lat: latitude,
@@ -195,6 +196,7 @@ const MapPage = () => {
     if (userLocation.lat !== null && userLocation.lng !== null) {
       moveMapCenter(userLocation.lat, userLocation.lng);
       updateUserMarker(userLocation.lat, userLocation.lng, userLocation.heading);
+      setCenterLocation({ lat: userLocation.lat, lng: userLocation.lng });
     } else {
       moveToCurrentLocation(); // 위치 정보가 없으면 새로 가져옴
     }
