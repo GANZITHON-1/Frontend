@@ -570,8 +570,9 @@ const MapPage = () => {
                 </div>
                 <p className="body-3">이웃 제보</p>
                 <p className="body-2">
+                  {selectData.report.roadAddress}
                   {selectData.report.lotAddress}
-                  <span onClick={() => navigator.clipboard.writeText(selectData.report.lotAddress)}>복사</span>
+                  <span onClick={() => navigator.clipboard.writeText(selectData.report.roadAddress + selectData.report.lotAddress)}>복사</span>
                 </p>
               </div>
 
